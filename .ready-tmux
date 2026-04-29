@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+# cp ~/.config/scripts/.ready-tmux.template-bun .ready-tmux
+
+# A template script that can be copied and modified to run when a tmux session is ready.
+# Put this script into the root directory of a project and it will execute when the tmux session is started.
+
+tmux send-keys -t neovim 'nvim .' C-m
+# `exec zsh` needs to be added because otherwise the shell will exit when the command finishes.
+tmux neww -n "bun dev" 'bun install && bun dev; exec zsh'
+tmux neww -n "terminal" 'git status; exec zsh'
+tmux rename-window -t 1 neovim
+tmux select-window -t neovim
