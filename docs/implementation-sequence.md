@@ -14,7 +14,7 @@ Actionable outcomes:
 
 - Add the Jest setup that works with the current Next.js version.
 - Add a small example test that proves the setup works.
-- Decide where behavior-focused domain tests should live.
+- Decide where behavior-focused domain tests should live: colocate them with the module that owns the behavior, and reserve root-level `__tests__` for app-level smoke, route, layout, and cross-module integration tests.
 - Document the rule that tests should verify external behavior, not implementation details.
 
 ## 2. Application and Module Skeleton
