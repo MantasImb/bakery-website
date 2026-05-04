@@ -79,6 +79,7 @@ V1 should prioritize a clear purchase flow for middle-aged or older customers an
 
 - Jest should be introduced as the first implementation step so future development can follow TDD.
 - Tests should verify external behavior and business rules, not implementation details.
+- Behavior-focused domain and service tests should live with the module that owns the behavior. Root-level `__tests__` should be reserved for app-level smoke, route, rendered layout, and cross-module integration tests. Direct tests of exported module-owned config or helpers, including exports from `app/layout.tsx`, should live beside the owning module.
 - Stock and checkout tests should cover limited inventory, quantity changes, sold-out behavior, concurrent checkout attempts, payment abandonment, and successful payment finalization.
 - Weekly menu tests should cover publish/close states, active menu selection, product availability, and pickup slot eligibility.
 - Order tests should cover guest customer details, line items, pickup slot assignment, payment state transitions, fulfillment state transitions, cancellation, and refund state.
