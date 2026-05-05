@@ -8,6 +8,15 @@ Don't run `bun run dev`, unless asked.
 
 <!-- END:nextjs-agent-rules -->
 
+## Architecture
+
+Organize commerce and operations behavior around capability modules, not broad technical layers.
+Business rules for weekly menus, carts, checkout, orders, and kitchen/admin workflows should live inside the module that owns that capability.
+Keep shared modules limited to small cross-module primitives such as result types, base error shapes, money helpers, and IDs.
+Do not move business rules into shared utilities just because more than one module needs to coordinate with them.
+Capability module `index.ts` files should expose only contracts that real callers need.
+Do not add speculative exports or type barrels before behavior and tests require them.
+
 ## Testing
 
 Behavior-focused domain and service tests should live with the module that owns the behavior.

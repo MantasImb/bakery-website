@@ -18,7 +18,7 @@ Last reviewed: 2026-05-05
 | Step | Status | Evidence |
 | --- | --- | --- |
 | 1. Testing Foundation | Done | `jest.config.ts`, `jest.setup.ts`, `package.json` test scripts, `__tests__/page.test.tsx`, `app/layout.test.tsx`, and `components/ui/button.test.tsx` exist. Test placement rules are documented in `AGENTS.md`. |
-| 2. Application and Module Skeleton | Not started | The Next.js app shell exists, but domain/service boundaries for menu, cart, checkout, order, and admin logic are not established yet. |
+| 2. Application and Module Skeleton | Done | Capability module entry points exist for weekly menu, cart, checkout, orders, and kitchen logic. Shared primitives exist for result, domain error, money, and IDs. `AGENTS.md` documents capability ownership and minimal public exports. |
 | 3. Sentry Error Monitoring | Not started | No Sentry dependency or configuration is present. |
 | 4. Analytics Wrapper and Event Plan | Not started | No PostHog dependency, analytics wrapper, or event plan module is present. |
 | 5. Internationalization Skeleton | Not started | No locale routes or dictionary structure are present. |
@@ -47,7 +47,7 @@ Actionable outcomes:
 
 ## 2. Application and Module Skeleton
 
-Status: Not started
+Status: Done
 
 Create the basic shape of the application before adding real commerce behavior.
 
@@ -55,10 +55,10 @@ This should define where domain logic, persistence access, validation, UI compos
 
 Actionable outcomes:
 
-- [ ] Establish the first domain/service boundaries.
-- [ ] Decide how validation errors and domain errors should be represented.
-- [ ] Create a clear place for weekly menu, product, cart, checkout, order, and admin/kitchen logic.
-- [ ] Keep public interfaces small enough that internals can evolve.
+- [x] Establish the first domain/service boundaries.
+- [x] Decide how validation errors and domain errors should be represented.
+- [x] Create a clear place for weekly menu, product, cart, checkout, order, and admin/kitchen logic.
+- [x] Keep public interfaces small enough that internals can evolve.
 
 ## 3. Sentry Error Monitoring
 
