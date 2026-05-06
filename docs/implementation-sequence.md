@@ -73,7 +73,7 @@ Actionable outcomes:
 - [ ] Add Sentry configuration for the relevant client and server runtimes.
 - [ ] Verify that an intentional smoke-test error can be captured in development or a staging-like environment.
 - [ ] Ensure sensitive customer/payment details are not sent to Sentry.
-- [ ] Leave detailed custom tagging for later feature work.
+- [ ] Leave detailed custom tagging for later feature work, but document what we should expect to have in the final product (or what to aim for).
 
 ## 4. Analytics Wrapper and Event Plan
 
@@ -89,6 +89,7 @@ Actionable outcomes:
 - [ ] Define initial event names for the expected funnel: homepage CTA click, product add, cart view, checkout started, payment success, and checkout abandonment.
 - [ ] Document what properties are safe and useful to send.
 - [ ] Delay full instrumentation until each feature flow exists.
+- [ ] Define what would full instrumentation would look like and document it.
 
 ## 5. Internationalization Skeleton
 

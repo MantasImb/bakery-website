@@ -20,6 +20,21 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Environment Variables
+
+Copy `.env.example` to `.env.local` for local development and fill in only the values needed for the feature you are working on.
+
+Sentry error monitoring uses these variables:
+
+- `SENTRY_DSN`: Server and edge runtime Sentry DSN.
+- `NEXT_PUBLIC_SENTRY_DSN`: Browser Sentry DSN exposed to the client bundle.
+- `SENTRY_ENVIRONMENT`: Sentry environment label, such as `development`, `preview`, or `production`.
+- `SENTRY_RELEASE`: Stable release identifier, usually the deployment git SHA.
+- `SENTRY_AUTH_TOKEN`: CI/deployment token for source-map upload only.
+- `SENTRY_ORG`: Sentry organization slug for source-map upload.
+- `SENTRY_PROJECT`: Sentry project slug for source-map upload.
+- `SENTRY_DEV_SMOKE_ENABLED`: Explicit opt-in for developer smoke routes outside normal local development.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

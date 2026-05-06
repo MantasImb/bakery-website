@@ -17,6 +17,12 @@ Do not move business rules into shared utilities just because more than one modu
 Capability module `index.ts` files should expose only contracts that real callers need.
 Do not add speculative exports or type barrels before behavior and tests require them.
 
+## Observability
+
+Follow `docs/sentry.md` when adding or changing Sentry behavior.
+Keep provider-specific observability integrations behind `/lib/observability/` except for framework-required setup files.
+Use operational IDs and workflow state for debugging context; do not send direct customer contact fields, raw request bodies, cookies, auth headers, secrets, or full provider payloads to Sentry.
+
 ## Testing
 
 Behavior-focused domain and service tests should live with the module that owns the behavior.
