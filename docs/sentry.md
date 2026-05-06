@@ -20,6 +20,8 @@ Keep Sentry behind `/lib/observability/`.
 
 The wrapper should stay small. It should provide a clear place for privacy filtering, context normalization, Sentry capture calls, and future provider-specific adapters. Do not turn it into a broad logging framework unless real feature work proves that need.
 
+The initial implementation may keep the public wrapper, sanitizer, and Sentry adapter in `/lib/observability/index.ts` while Sentry is the only provider. When PostHog or another observability provider is added, expect this folder to split into a project-owned public facade plus provider-specific files, for example `context.ts`, `sentry.ts`, and `analytics.ts`.
+
 ## Allowed Context
 
 Sentry events may include operational join keys and workflow state that help reproduce and debug failures:

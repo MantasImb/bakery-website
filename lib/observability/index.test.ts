@@ -1,0 +1,79 @@
+import { sanitizeObservabilityContext } from "./index";
+
+describe("sanitizeObservabilityContext", () => {
+  // These are the values we want Sentry to have when debugging an error: stable
+  // IDs and compact workflow state that let us look up the real data elsewhere.
+  it("keeps safe operational IDs and workflow state", () => {
+    const sanitized = sanitizeObservabilityContext({
+      orderId: "order_123",
+      checkoutId: "checkout_123",
+      stripePaymentIntentId: "pi_123",
+      paymentState: "pending_payment",
+      fulfillmentState: "paid",
+      locale: "nb",
+      route: "/checkout",
+      runtime: "nodejs",
+    });
+
+    expect(sanitized).toEqual({
+      orderId: "order_123",
+      checkoutId: "checkout_123",
+      stripePaymentIntentId: "pi_123",
+      paymentState: "pending_payment",
+      fulfillmentState: "paid",
+      locale: "nb",
+      route: "/checkout",
+      runtime: "nodejs",
+    });
+  });
+
+  // This test is the privacy guardrail. It proves that tempting debugging data
+  // such as request bodies, form data, cookies, auth headers, and full provider
+  // payloads do not pass through just because they were present at the boundary.
+  it("removes customer contact fields, secrets, raw payloads, and nested records", () => {
+    const sanitized = sanitizeObservabilityContext({
+      orderId: "order_123",
+      customerName: "Ada Lovelace",
+      email: "ada@example.com",
+      phone: "+47 123 45 678",
+      customerNotes: "Leave at the door",
+      rawRequestBody: { email: "ada@example.com" },
+      formData: { customerName: "Ada Lovelace" },
+      cookies: "session=secret",
+      authorization: "Bearer secret",
+      apiKey: "secret",
+      stripePayload: { id: "evt_123", data: { object: { email: "ada@example.com" } } },
+      fullOrder: { id: "order_123", email: "ada@example.com" },
+    });
+
+    expect(sanitized).toEqual({
+      orderId: "order_123",
+    });
+  });
+
+  // Stock and cart bugs often need product quantities, but full cart objects can
+  // carry notes or future customer data. This allows only the compact map.
+  it("keeps compact product quantities without keeping full cart objects", () => {
+    const sanitized = sanitizeObservabilityContext({
+      checkoutId: "checkout_123",
+      productQuantities: {
+        product_123: 2,
+        product_456: 1,
+        product_invalid: Number.NaN,
+      },
+      cart: {
+        items: [
+          { productId: "product_123", customerNote: "birthday order" },
+        ],
+      },
+    });
+
+    expect(sanitized).toEqual({
+      checkoutId: "checkout_123",
+      productQuantities: {
+        product_123: 2,
+        product_456: 1,
+      },
+    });
+  });
+});

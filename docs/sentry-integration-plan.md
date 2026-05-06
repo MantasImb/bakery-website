@@ -1,4 +1,4 @@
-# Sentry Integration Plan
+le# Sentry Integration Plan
 
 This is an expendable implementation plan for adding Sentry. Update or delete it as the work lands. Durable rules belong in `docs/sentry.md`.
 
