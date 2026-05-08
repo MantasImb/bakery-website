@@ -1,6 +1,16 @@
-le# Sentry Integration Plan
+# Sentry Integration Plan
 
 This is an expendable implementation plan for adding Sentry. Update or delete it as the work lands. Durable rules belong in `docs/sentry.md`.
+
+## Phase Status
+
+- Phase 1: Completed
+- Phase 2: Completed
+- Phase 3: Completed
+- Phase 4: Completed
+- Phase 5: Not started
+- Phase 6: Not started
+- Phase 7: Partially completed
 
 ## Decisions From Planning
 
@@ -13,6 +23,8 @@ This is an expendable implementation plan for adding Sentry. Update or delete it
 - Include release/source-map upload as its own integration step.
 
 ## Phase 1: Dependency And Docs Check
+
+Status: Completed
 
 - Confirm the current official Sentry Next.js setup for the installed Next.js version.
 - Re-read the local Next.js instrumentation docs under `node_modules/next/dist/docs/`.
@@ -31,6 +43,8 @@ Expected environment variables:
 
 ## Phase 2: Observability Wrapper
 
+Status: Completed
+
 - Create `/lib/observability/`.
 - Add public wrapper functions for capturing exceptions and messages.
 - Add typed context for safe IDs and workflow state.
@@ -46,6 +60,8 @@ Initial public API should stay small. A likely first shape:
 
 ## Phase 3: Next And Sentry Runtime Setup
 
+Status: Completed
+
 - Add the root-level Sentry/Next instrumentation files required by the current SDK and Next.js version.
 - Configure client, server, and edge runtime capture.
 - Wire Next request error capture through the current `instrumentation.ts` convention.
@@ -54,6 +70,8 @@ Initial public API should stay small. A likely first shape:
 - Keep `sendDefaultPii` disabled unless this guidance is intentionally changed.
 
 ## Phase 4: Developer Smoke Surface
+
+Status: Completed
 
 - Add a clearly named developer-only smoke route or page, such as `/dev/sentry-smoke`.
 - Include a server-side capture path.
@@ -64,6 +82,8 @@ Initial public API should stay small. A likely first shape:
 
 ## Phase 5: Source Maps And Releases
 
+Status: Not started
+
 - Decide the production deployment target and CI path.
 - Choose the release identifier, preferably the deployment git SHA.
 - Configure source-map upload for production builds.
@@ -73,6 +93,8 @@ Initial public API should stay small. A likely first shape:
 
 ## Phase 6: Telemetry Expansion
 
+Status: Not started
+
 - Decide initial tracing sample rates per environment.
 - Decide whether session replay is enabled, and at what sample rates.
 - Confirm masking/privacy settings before enabling replay.
@@ -80,6 +102,8 @@ Initial public API should stay small. A likely first shape:
 - Revisit this after checkout, Stripe webhooks, order finalization, and admin workflows exist.
 
 ## Phase 7: Validation
+
+Status: Partially completed
 
 - Run lint and tests.
 - Run a production build.

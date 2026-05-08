@@ -99,6 +99,17 @@ Appropriate tests include:
 
 Avoid tests that assert Sentry SDK implementation details.
 
+## Developer Smoke Test
+
+The route `/api/dev/sentry-smoke` sends one controlled exception through the
+project-owned observability wrapper. It exists only to verify that local or
+deployed Sentry runtime capture is wired correctly.
+
+The route returns `404` unless `SENTRY_DEV_SMOKE_ENABLED=true` is set. Keep this
+flag disabled by default, and enable it only while intentionally testing Sentry
+delivery. The smoke event uses static safe context only: route, runtime, feature
+flag name, and config name.
+
 ## Development Notes
 
 Before writing Sentry or Next instrumentation code, read the relevant local Next.js docs under `node_modules/next/dist/docs/` and the current official Sentry Next.js docs. This project uses a newer Next.js version with instrumentation conventions that may differ from older examples.
