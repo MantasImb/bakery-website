@@ -1,15 +1,12 @@
 import type { NextConfig } from "next";
+import { PHASE_PRODUCTION_BUILD } from "next/constants";
 import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
   /* config options here */
 };
 
-const vercelEnvironment = process.env.VERCEL_ENV;
-const shouldRequireSentrySourceMaps =
-  vercelEnvironment === "preview" || vercelEnvironment === "production";
-
-if (shouldRequireSentrySourceMaps) {
+function requireSentrySourceMapConfigForVercelBuild() {
   const missingSentrySourceMapConfig = [
     "SENTRY_AUTH_TOKEN",
     "SENTRY_ORG",
@@ -22,33 +19,46 @@ if (shouldRequireSentrySourceMaps) {
 
   if (missingSentrySourceMapConfig.length > 0) {
     throw new Error(
-      `Missing Sentry source-map upload configuration for Vercel ${vercelEnvironment} build: ${missingSentrySourceMapConfig.join(", ")}`,
+      `Missing Sentry source-map upload configuration for Vercel ${process.env.VERCEL_ENV} build: ${missingSentrySourceMapConfig.join(", ")}`,
     );
   }
 }
 
-export default withSentryConfig(nextConfig, {
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
-  authToken: process.env.SENTRY_AUTH_TOKEN,
+function createNextConfig(phase: string) {
+  const vercelEnvironment = process.env.VERCEL_ENV;
+  const shouldRequireSentrySourceMaps =
+    phase === PHASE_PRODUCTION_BUILD &&
+    (vercelEnvironment === "preview" || vercelEnvironment === "production");
 
-  // Keep local builds quiet, but show upload details in CI where source-map
-  // configuration is expected to be intentional.
-  silent: !process.env.CI,
+  if (shouldRequireSentrySourceMaps) {
+    requireSentrySourceMapConfigForVercelBuild();
+  }
 
-  // Do not send Sentry build-plugin telemetry for this project.
-  telemetry: false,
+  return withSentryConfig(nextConfig, {
+    org: process.env.SENTRY_ORG,
+    project: process.env.SENTRY_PROJECT,
+    authToken: process.env.SENTRY_AUTH_TOKEN,
 
-  // Runtime capture works without source maps. Uploads are a deployment/CI
-  // concern and need SENTRY_AUTH_TOKEN plus org/project secrets.
-  sourcemaps: {
-    disable: !process.env.SENTRY_AUTH_TOKEN,
-  },
+    // Keep local builds quiet, but show upload details in CI where source-map
+    // configuration is expected to be intentional.
+    silent: !process.env.CI,
 
-  webpack: {
-    treeshake: {
-      removeDebugLogging: true,
-      removeTracing: true,
+    // Do not send Sentry build-plugin telemetry for this project.
+    telemetry: false,
+
+    // Runtime capture works without source maps. Uploads are a deployment/CI
+    // concern and need SENTRY_AUTH_TOKEN plus org/project secrets.
+    sourcemaps: {
+      disable: !process.env.SENTRY_AUTH_TOKEN,
     },
-  },
-});
+
+    webpack: {
+      treeshake: {
+        removeDebugLogging: true,
+        removeTracing: true,
+      },
+    },
+  });
+}
+
+export default createNextConfig;

@@ -15,6 +15,10 @@ const originalVercelEnv = process.env.VERCEL_ENV;
 const callGet = GET as (request: Request) => ReturnType<typeof GET>;
 
 describe("GET /api/dev/sentry-smoke", () => {
+  beforeEach(() => {
+    process.env.VERCEL_ENV = "development";
+  });
+
   afterEach(() => {
     if (originalSmokeEnabled === undefined) {
       delete process.env.SENTRY_DEV_SMOKE_ENABLED;
