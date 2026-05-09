@@ -39,7 +39,9 @@ const SAFE_CONTEXT_KEY_SET: ReadonlySet<string> = new Set(SAFE_CONTEXT_KEYS);
 // This is the shape normal application code should pass into the wrapper.
 // Keeping it typed gives callers a nudge toward safe context before runtime
 // sanitization runs.
-export type ObservabilityContext = Partial<Record<SafeContextKey, SafeScalar>> & {
+export type ObservabilityContext = Partial<
+  Record<SafeContextKey, SafeScalar>
+> & {
   productQuantities?: ProductQuantities;
 };
 
