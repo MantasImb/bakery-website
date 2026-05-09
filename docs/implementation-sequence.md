@@ -89,7 +89,7 @@ Actionable outcomes:
 - [ ] Define initial event names for the expected funnel: homepage CTA click, product add, cart view, checkout started, payment success, and checkout abandonment.
 - [ ] Document what properties are safe and useful to send.
 - [ ] Delay full instrumentation until each feature flow exists.
-- [ ] Define what would full instrumentation would look like and document it.
+- [ ] Define what full instrumentation would look like and document it.
 
 ## 5. Internationalization Skeleton
 

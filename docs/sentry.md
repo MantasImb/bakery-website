@@ -105,8 +105,10 @@ The route `/api/dev/sentry-smoke` sends one controlled exception through the
 project-owned observability wrapper. It exists only to verify that local or
 deployed Sentry runtime capture is wired correctly.
 
-The route returns `404` unless `SENTRY_DEV_SMOKE_ENABLED=true` is set. Keep this
-flag disabled by default, and enable it only while intentionally testing Sentry
+The route returns `404` unless `SENTRY_DEV_SMOKE_ENABLED=true` is set. When the
+route is enabled, callers must also provide `SENTRY_DEV_SMOKE_TOKEN` through the
+`x-smoke-token` header or a bearer `Authorization` header. Keep this flag
+disabled by default, and enable it only while intentionally testing Sentry
 delivery. The smoke event uses static safe context only: route, runtime, feature
 flag name, and config name.
 

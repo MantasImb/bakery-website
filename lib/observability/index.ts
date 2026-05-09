@@ -119,7 +119,7 @@ export function captureMessage(
 function isSafeScalar(value: unknown): value is SafeScalar {
   return (
     typeof value === "string" ||
-    typeof value === "number" ||
+    (typeof value === "number" && Number.isFinite(value)) ||
     typeof value === "boolean"
   );
 }

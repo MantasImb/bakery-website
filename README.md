@@ -29,11 +29,13 @@ Sentry error monitoring uses these variables:
 - `SENTRY_DSN`: Server and edge runtime Sentry DSN.
 - `NEXT_PUBLIC_SENTRY_DSN`: Browser Sentry DSN exposed to the client bundle.
 - `SENTRY_ENVIRONMENT`: Sentry environment label, such as `development`, `preview`, or `production`.
+- `NEXT_PUBLIC_SENTRY_ENVIRONMENT`: Browser Sentry environment label. Use the same value as `SENTRY_ENVIRONMENT`.
 - `SENTRY_RELEASE`: Stable release identifier, usually the deployment git SHA.
 - `SENTRY_AUTH_TOKEN`: CI/deployment token for source-map upload only.
 - `SENTRY_ORG`: Sentry organization slug for source-map upload.
 - `SENTRY_PROJECT`: Sentry project slug for source-map upload.
 - `SENTRY_DEV_SMOKE_ENABLED`: Explicit opt-in for developer smoke routes outside normal local development.
+- `SENTRY_DEV_SMOKE_TOKEN`: Secret token required to call the developer smoke route when enabled.
 
 ## Learn More
 

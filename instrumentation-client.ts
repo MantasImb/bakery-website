@@ -5,7 +5,10 @@ const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
 Sentry.init({
   dsn,
   enabled: Boolean(dsn),
-  environment: process.env.NODE_ENV,
+  environment:
+    process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT ||
+    process.env.SENTRY_ENVIRONMENT ||
+    process.env.NODE_ENV,
 
   // Browser events must not include automatic user IP, headers, cookies, or
   // other default PII. Add safe workflow IDs through the observability wrapper.

@@ -2,9 +2,18 @@ import { captureException } from "@/lib/observability";
 
 export const runtime = "nodejs";
 
-export async function GET() {
+export async function GET(request: Request) {
   if (process.env.SENTRY_DEV_SMOKE_ENABLED !== "true") {
     return Response.json({ status: "disabled" }, { status: 404 });
+  }
+
+  const smokeToken = process.env.SENTRY_DEV_SMOKE_TOKEN;
+  const requestToken =
+    request.headers.get("x-smoke-token") ??
+    request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
+
+  if (!smokeToken || requestToken !== smokeToken) {
+    return Response.json({ status: "forbidden" }, { status: 403 });
   }
 
   // This route intentionally creates a controlled exception so a developer can

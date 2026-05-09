@@ -7,17 +7,21 @@ describe("sanitizeObservabilityContext", () => {
     const sanitized = sanitizeObservabilityContext({
       orderId: "order_123",
       checkoutId: "checkout_123",
+      productId: 123,
       stripePaymentIntentId: "pi_123",
       paymentState: "pending_payment",
       fulfillmentState: "paid",
       locale: "nb",
       route: "/checkout",
       runtime: "nodejs",
+      reservationId: Number.NaN,
+      notificationId: Number.POSITIVE_INFINITY,
     });
 
     expect(sanitized).toEqual({
       orderId: "order_123",
       checkoutId: "checkout_123",
+      productId: 123,
       stripePaymentIntentId: "pi_123",
       paymentState: "pending_payment",
       fulfillmentState: "paid",
