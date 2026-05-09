@@ -37,6 +37,11 @@ Sentry error monitoring uses these variables:
 - `SENTRY_DEV_SMOKE_ENABLED`: Explicit opt-in for developer smoke routes outside normal local development.
 - `SENTRY_DEV_SMOKE_TOKEN`: Secret token required to call the developer smoke route when enabled.
 
+Vercel Preview and Production builds require `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`,
+`SENTRY_PROJECT`, and either `SENTRY_RELEASE` or Vercel's
+`VERCEL_GIT_COMMIT_SHA` system environment variable so source-map upload cannot
+be skipped accidentally.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

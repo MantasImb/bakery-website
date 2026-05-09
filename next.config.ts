@@ -5,6 +5,28 @@ const nextConfig: NextConfig = {
   /* config options here */
 };
 
+const vercelEnvironment = process.env.VERCEL_ENV;
+const shouldRequireSentrySourceMaps =
+  vercelEnvironment === "preview" || vercelEnvironment === "production";
+
+if (shouldRequireSentrySourceMaps) {
+  const missingSentrySourceMapConfig = [
+    "SENTRY_AUTH_TOKEN",
+    "SENTRY_ORG",
+    "SENTRY_PROJECT",
+  ].filter((key) => !process.env[key]);
+
+  if (!process.env.SENTRY_RELEASE && !process.env.VERCEL_GIT_COMMIT_SHA) {
+    missingSentrySourceMapConfig.push("SENTRY_RELEASE or VERCEL_GIT_COMMIT_SHA");
+  }
+
+  if (missingSentrySourceMapConfig.length > 0) {
+    throw new Error(
+      `Missing Sentry source-map upload configuration for Vercel ${vercelEnvironment} build: ${missingSentrySourceMapConfig.join(", ")}`,
+    );
+  }
+}
+
 export default withSentryConfig(nextConfig, {
   org: process.env.SENTRY_ORG,
   project: process.env.SENTRY_PROJECT,

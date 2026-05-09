@@ -85,6 +85,11 @@ Production Sentry events are most useful when they are tied to a release and upl
 
 The integration plan should include release/source-map setup as a dedicated step. This step may depend on the deployment provider or CI pipeline. Use a stable release identifier such as a git SHA or deployment commit SHA, and keep Sentry auth tokens in CI/deployment secrets.
 
+Vercel preview and production builds must upload Sentry source maps. Those
+builds should fail early when `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`,
+`SENTRY_PROJECT`, and either `SENTRY_RELEASE` or `VERCEL_GIT_COMMIT_SHA` are
+not available. Local builds may skip source-map upload.
+
 Do not block local runtime capture on deployment-specific source-map work, but do not consider production Sentry complete until release and source-map upload are configured.
 
 ## Testing
@@ -106,11 +111,11 @@ project-owned observability wrapper. It exists only to verify that local or
 deployed Sentry runtime capture is wired correctly.
 
 The route returns `404` unless `SENTRY_DEV_SMOKE_ENABLED=true` is set. When the
-route is enabled, callers must also provide `SENTRY_DEV_SMOKE_TOKEN` through the
-`x-smoke-token` header or a bearer `Authorization` header. Keep this flag
-disabled by default, and enable it only while intentionally testing Sentry
-delivery. The smoke event uses static safe context only: route, runtime, feature
-flag name, and config name.
+route is enabled outside Vercel production, callers must also provide
+`SENTRY_DEV_SMOKE_TOKEN` through the `x-smoke-token` header or a bearer
+`Authorization` header. Keep this flag disabled by default, and enable it only
+while intentionally testing Sentry delivery. The smoke event uses static safe
+context only: route, runtime, feature flag name, and config name.
 
 ## Development Notes
 

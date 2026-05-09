@@ -11,6 +11,7 @@ jest.mock("@/lib/observability", () => ({
 
 const originalSmokeEnabled = process.env.SENTRY_DEV_SMOKE_ENABLED;
 const originalSmokeToken = process.env.SENTRY_DEV_SMOKE_TOKEN;
+const originalVercelEnv = process.env.VERCEL_ENV;
 const callGet = GET as (request: Request) => ReturnType<typeof GET>;
 
 describe("GET /api/dev/sentry-smoke", () => {
@@ -25,6 +26,12 @@ describe("GET /api/dev/sentry-smoke", () => {
       delete process.env.SENTRY_DEV_SMOKE_TOKEN;
     } else {
       process.env.SENTRY_DEV_SMOKE_TOKEN = originalSmokeToken;
+    }
+
+    if (originalVercelEnv === undefined) {
+      delete process.env.VERCEL_ENV;
+    } else {
+      process.env.VERCEL_ENV = originalVercelEnv;
     }
 
     jest.clearAllMocks();
@@ -48,6 +55,22 @@ describe("GET /api/dev/sentry-smoke", () => {
 
     await expect(response.json()).resolves.toEqual({ status: "forbidden" });
     expect(response.status).toBe(403);
+    expect(captureException).not.toHaveBeenCalled();
+  });
+
+  it("returns 404 and does not report in production even when enabled and authorized", async () => {
+    process.env.SENTRY_DEV_SMOKE_ENABLED = "true";
+    process.env.SENTRY_DEV_SMOKE_TOKEN = "secret-token";
+    process.env.VERCEL_ENV = "production";
+
+    const response = await callGet(
+      new Request("http://localhost/api/dev/sentry-smoke", {
+        headers: { "x-smoke-token": "secret-token" },
+      }),
+    );
+
+    await expect(response.json()).resolves.toEqual({ status: "disabled" });
+    expect(response.status).toBe(404);
     expect(captureException).not.toHaveBeenCalled();
   });
 
