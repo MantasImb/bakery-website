@@ -9,5 +9,9 @@ export function resolveSentryServerRelease(env: Environment = process.env) {
 }
 
 export function sentryReleaseOption(release: string | undefined) {
+  return release ? { release: { name: release } } : {};
+}
+
+export function sentryRuntimeReleaseOption(release: string | undefined) {
   return release ? { release } : {};
 }

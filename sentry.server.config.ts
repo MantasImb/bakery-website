@@ -1,7 +1,7 @@
 import * as Sentry from "@sentry/nextjs";
 import {
   resolveSentryServerRelease,
-  sentryReleaseOption,
+  sentryRuntimeReleaseOption,
 } from "./lib/observability/sentry-release";
 
 const dsn = process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN;
@@ -11,7 +11,7 @@ Sentry.init({
   dsn,
   enabled: Boolean(dsn),
   environment: process.env.SENTRY_ENVIRONMENT || process.env.NODE_ENV,
-  ...sentryReleaseOption(release),
+  ...sentryRuntimeReleaseOption(release),
 
   // Keep automatic request/user enrichment disabled. Route and orchestration
   // code should add only the safe join keys allowed by docs/sentry.md.

@@ -1,6 +1,7 @@
 import {
   resolveSentryServerRelease,
   sentryReleaseOption,
+  sentryRuntimeReleaseOption,
 } from "./sentry-release";
 
 describe("resolveSentryServerRelease", () => {
@@ -27,8 +28,22 @@ describe("sentryReleaseOption", () => {
     expect(sentryReleaseOption(undefined)).toEqual({});
   });
 
-  it("returns the Sentry init release option when a release is configured", () => {
+  it("returns the Sentry build release option when a release is configured", () => {
     expect(sentryReleaseOption("release_123")).toEqual({
+      release: {
+        name: "release_123",
+      },
+    });
+  });
+});
+
+describe("sentryRuntimeReleaseOption", () => {
+  it("omits release when no release is configured", () => {
+    expect(sentryRuntimeReleaseOption(undefined)).toEqual({});
+  });
+
+  it("returns the Sentry runtime release option when a release is configured", () => {
+    expect(sentryRuntimeReleaseOption("release_123")).toEqual({
       release: "release_123",
     });
   });
