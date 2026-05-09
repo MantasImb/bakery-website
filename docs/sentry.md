@@ -92,9 +92,10 @@ not available. Local builds may skip source-map upload.
 
 Runtime Sentry events must use the same release identifier as the source-map
 upload. The release precedence is `SENTRY_RELEASE`, then
-`VERCEL_GIT_COMMIT_SHA`. Browser events should use
-`NEXT_PUBLIC_SENTRY_RELEASE` set to that same value because non-`NEXT_PUBLIC_`
-environment variables are not reliably exposed to browser bundles.
+`VERCEL_GIT_COMMIT_SHA`. Server and edge init may pass that release explicitly.
+Browser init should rely on the release that `@sentry/nextjs` injects during the
+same build that uploads source maps; do not pass a separate public release value
+that can drift from the upload release.
 
 Do not block local runtime capture on deployment-specific source-map work, but do not consider production Sentry complete until release and source-map upload are configured and runtime events report the matching release.
 

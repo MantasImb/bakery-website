@@ -31,7 +31,6 @@ Sentry error monitoring uses these variables:
 - `SENTRY_ENVIRONMENT`: Sentry environment label, such as `development`, `preview`, or `production`.
 - `NEXT_PUBLIC_SENTRY_ENVIRONMENT`: Browser Sentry environment label. Use the same value as `SENTRY_ENVIRONMENT`.
 - `SENTRY_RELEASE`: Stable release identifier, usually the deployment git SHA. Overrides Vercel's deployment commit SHA.
-- `NEXT_PUBLIC_SENTRY_RELEASE`: Browser-safe release identifier. Use the same value as `SENTRY_RELEASE` or `VERCEL_GIT_COMMIT_SHA` so browser events match uploaded source maps.
 - `SENTRY_AUTH_TOKEN`: CI/deployment token for source-map upload only.
 - `SENTRY_ORG`: Sentry organization slug for source-map upload.
 - `SENTRY_PROJECT`: Sentry project slug for source-map upload.
@@ -41,9 +40,9 @@ Sentry error monitoring uses these variables:
 Vercel Preview and Production builds require `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`,
 `SENTRY_PROJECT`, and either `SENTRY_RELEASE` or Vercel's
 `VERCEL_GIT_COMMIT_SHA` system environment variable so source-map upload cannot
-be skipped accidentally. Configure `NEXT_PUBLIC_SENTRY_RELEASE` to the same
-release value for browser events; non-`NEXT_PUBLIC_` variables are not reliably
-available in the client bundle.
+be skipped accidentally. Browser runtime events use the release injected by
+`@sentry/nextjs` during the build, so do not configure a separate public release
+variable that can drift from the uploaded source-map release.
 
 ## Learn More
 

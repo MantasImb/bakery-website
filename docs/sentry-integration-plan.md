@@ -38,7 +38,6 @@ Expected environment variables:
 - `SENTRY_ENVIRONMENT`
 - `NEXT_PUBLIC_SENTRY_ENVIRONMENT`
 - `SENTRY_RELEASE`
-- `NEXT_PUBLIC_SENTRY_RELEASE`
 - `SENTRY_AUTH_TOKEN` for CI/source-map upload only
 - Sentry organization and project identifiers if the upload step requires them
 - A dev-only smoke opt-in flag and token if the route should be usable outside local development
@@ -91,7 +90,7 @@ Status: Completed
 - Configure source-map upload for production builds through `@sentry/nextjs` and `withSentryConfig`; do not enable a separate Sentry Vercel source-map upload integration initially.
 - Store `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, and `SENTRY_PROJECT` in Vercel preview and production environment variables.
 - Fail Vercel preview and production builds early when source-map upload configuration is missing.
-- Use the same release identifier for source-map upload and runtime events across server, edge, and browser Sentry init.
+- Use the same release identifier for source-map upload and runtime events: server and edge init resolve it explicitly, while browser init relies on the `@sentry/nextjs` build-time injected release.
 - Verify a Vercel preview build uploads source maps and reports readable stack traces in Sentry.
 - Ensure source maps are uploaded to Sentry without making browser-served source maps publicly useful if the deployment setup allows that choice.
 
