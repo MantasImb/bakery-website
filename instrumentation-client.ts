@@ -1,6 +1,15 @@
 import * as Sentry from "@sentry/nextjs";
+import {
+  resolveSentryBrowserRelease,
+  sentryReleaseOption,
+} from "./lib/observability/sentry-release";
 
 const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
+const release = resolveSentryBrowserRelease({
+  NEXT_PUBLIC_SENTRY_RELEASE: process.env.NEXT_PUBLIC_SENTRY_RELEASE,
+  SENTRY_RELEASE: process.env.SENTRY_RELEASE,
+  VERCEL_GIT_COMMIT_SHA: process.env.VERCEL_GIT_COMMIT_SHA,
+});
 
 Sentry.init({
   dsn,
@@ -9,6 +18,7 @@ Sentry.init({
     process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT ||
     process.env.SENTRY_ENVIRONMENT ||
     process.env.NODE_ENV,
+  ...sentryReleaseOption(release),
 
   // Browser events must not include automatic user IP, headers, cookies, or
   // other default PII. Add safe workflow IDs through the observability wrapper.

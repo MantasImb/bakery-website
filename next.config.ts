@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 import { PHASE_PRODUCTION_BUILD } from "next/constants";
 import { withSentryConfig } from "@sentry/nextjs";
+import { resolveSentryServerRelease } from "./lib/observability/sentry-release";
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -34,10 +35,15 @@ function createNextConfig(phase: string) {
     requireSentrySourceMapConfigForVercelBuild();
   }
 
+  const sentryRelease = resolveSentryServerRelease();
+
   return withSentryConfig(nextConfig, {
     org: process.env.SENTRY_ORG,
     project: process.env.SENTRY_PROJECT,
     authToken: process.env.SENTRY_AUTH_TOKEN,
+    release: {
+      name: sentryRelease,
+    },
 
     // Keep local builds quiet, but show upload details in CI where source-map
     // configuration is expected to be intentional.
