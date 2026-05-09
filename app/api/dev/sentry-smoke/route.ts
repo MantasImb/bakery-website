@@ -7,6 +7,10 @@ export async function GET(request: Request) {
     return Response.json({ status: "disabled" }, { status: 404 });
   }
 
+  if (process.env.VERCEL_ENV === "production") {
+    return Response.json({ status: "disabled" }, { status: 404 });
+  }
+
   const smokeToken = process.env.SENTRY_DEV_SMOKE_TOKEN;
   const requestToken =
     request.headers.get("x-smoke-token") ??
