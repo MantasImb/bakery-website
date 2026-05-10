@@ -62,7 +62,7 @@ Actionable outcomes:
 
 ## 3. Sentry Error Monitoring
 
-Status: Not started
+Status: Done
 
 Add Sentry early, but keep the integration thin.
 
@@ -70,10 +70,10 @@ Sentry is cross-cutting infrastructure. It is much easier to add before serious 
 
 Actionable outcomes:
 
-- [ ] Add Sentry configuration for the relevant client and server runtimes.
-- [ ] Verify that an intentional smoke-test error can be captured in development or a staging-like environment.
-- [ ] Ensure sensitive customer/payment details are not sent to Sentry.
-- [ ] Leave detailed custom tagging for later feature work, but document what we should expect to have in the final product (or what to aim for).
+- [x] Add Sentry configuration for the relevant client and server runtimes.
+- [x] Verify that an intentional smoke-test error can be captured in development or a staging-like environment.
+- [x] Ensure sensitive customer/payment details are not sent to Sentry.
+- [x] Leave detailed custom tagging for later feature work, but document what we should expect to have in the final product (or what to aim for).
 
 ## 4. Analytics Wrapper and Event Plan
 

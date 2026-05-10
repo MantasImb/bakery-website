@@ -90,7 +90,14 @@ builds should fail early when `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`,
 `SENTRY_PROJECT`, and either `SENTRY_RELEASE` or `VERCEL_GIT_COMMIT_SHA` are
 not available. Local builds may skip source-map upload.
 
-Do not block local runtime capture on deployment-specific source-map work, but do not consider production Sentry complete until release and source-map upload are configured.
+Runtime Sentry events must use the same release identifier as the source-map
+upload. The release precedence is `SENTRY_RELEASE`, then
+`VERCEL_GIT_COMMIT_SHA`. Server and edge init may pass that release explicitly.
+Browser init should rely on the release that `@sentry/nextjs` injects during the
+same build that uploads source maps; do not pass a separate public release value
+that can drift from the upload release.
+
+Do not block local runtime capture on deployment-specific source-map work, but do not consider production Sentry complete until release and source-map upload are configured and runtime events report the matching release.
 
 ## Testing
 
@@ -99,7 +106,7 @@ Tests should verify project behavior and guardrails, not Sentry internals.
 Appropriate tests include:
 
 - The observability sanitizer removes disallowed fields and preserves allowed IDs/state.
-- The developer smoke route is unavailable outside development or without the required opt-in flag.
+- The developer smoke route is unavailable without the required opt-in flag and token, and remains unavailable in Vercel production.
 - Feature code reports unexpected failures through the project wrapper when that behavior matters at the boundary.
 
 Avoid tests that assert Sentry SDK implementation details.

@@ -8,7 +8,7 @@ This is an expendable implementation plan for adding Sentry. Update or delete it
 - Phase 2: Completed
 - Phase 3: Completed
 - Phase 4: Completed
-- Phase 5: Not started
+- Phase 5: Completed
 - Phase 6: Not started
 - Phase 7: Partially completed
 
@@ -36,10 +36,11 @@ Expected environment variables:
 - `SENTRY_DSN`
 - `NEXT_PUBLIC_SENTRY_DSN`
 - `SENTRY_ENVIRONMENT`
+- `NEXT_PUBLIC_SENTRY_ENVIRONMENT`
 - `SENTRY_RELEASE`
 - `SENTRY_AUTH_TOKEN` for CI/source-map upload only
 - Sentry organization and project identifiers if the upload step requires them
-- A dev-only smoke opt-in flag if the route should be usable outside local development
+- A dev-only smoke opt-in flag and token if the route should be usable outside local development
 
 ## Phase 2: Observability Wrapper
 
@@ -82,13 +83,15 @@ Status: Completed
 
 ## Phase 5: Source Maps And Releases
 
-Status: Not started
+Status: Completed
 
-- Decide the production deployment target and CI path.
-- Choose the release identifier, preferably the deployment git SHA.
-- Configure source-map upload for production builds.
-- Store `SENTRY_AUTH_TOKEN` and project identifiers in CI/deployment secrets.
-- Verify a production-like build reports readable stack traces in Sentry.
+- Decide the production deployment target and CI path: Vercel deploys preview and production builds.
+- Choose the release identifier, preferably the deployment git SHA: use Vercel's deployment commit SHA, with `SENTRY_RELEASE` still supported as an explicit override.
+- Configure source-map upload for production builds through `@sentry/nextjs` and `withSentryConfig`; do not enable a separate Sentry Vercel source-map upload integration initially.
+- Store `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, and `SENTRY_PROJECT` in Vercel preview and production environment variables.
+- Fail Vercel preview and production builds early when source-map upload configuration is missing.
+- Use the same release identifier for source-map upload and runtime events: server and edge init resolve it explicitly, while browser init relies on the `@sentry/nextjs` build-time injected release.
+- Verify a Vercel preview build uploads source maps and reports readable stack traces in Sentry.
 - Ensure source maps are uploaded to Sentry without making browser-served source maps publicly useful if the deployment setup allows that choice.
 
 ## Phase 6: Telemetry Expansion
@@ -114,6 +117,5 @@ Status: Partially completed
 
 ## Open Follow-Ups
 
-- Deployment provider and CI path are not yet pinned down.
 - Final tracing, replay, and logs sample rates should be selected when production traffic expectations are clearer.
 - Feature-specific Sentry context should be added with the feature that owns the workflow.
