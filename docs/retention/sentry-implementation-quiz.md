@@ -404,11 +404,11 @@ This quiz is based on the current Sentry guidance and implementation in this pro
 - [ ] C. `{ sentryRelease: "release_123" }`
 - [ ] D. `"release_123"`
 
-#### 66. Why should browser events use `NEXT_PUBLIC_SENTRY_RELEASE`?
-- [ ] A. Browser bundles cannot reliably access non-`NEXT_PUBLIC_` environment variables
-- [ ] B. Server releases are never useful
-- [ ] C. Source maps only work without a release
-- [ ] D. It disables runtime capture
+#### 66. How should browser Sentry init get the release that matches uploaded source maps?
+- [ ] A. It should rely on the release injected by `@sentry/nextjs` during the same build that uploads source maps
+- [ ] B. It should pass a separate `NEXT_PUBLIC_SENTRY_RELEASE` override from browser config
+- [ ] C. It should use `SENTRY_AUTH_TOKEN` as the browser runtime release
+- [ ] D. It should omit releases because browser source maps only work without them
 
 #### 67. Which file wraps Next config with Sentry build configuration?
 - [ ] A. `next.config.ts`
