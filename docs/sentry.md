@@ -79,6 +79,17 @@ Telemetry expansion:
 - Do not add detailed feature tags before the owning feature exists.
 - When feature flows are implemented, add safe IDs and workflow states at route or orchestration boundaries.
 
+## Initial Telemetry Policy
+
+The initial telemetry policy is intentionally off for all environments:
+
+- Server, edge, and browser tracing sample rate is `0`.
+- Browser session replay sample rates are `0`, and no replay integration should be added until masking and sampling are decided.
+- Sentry logs are disabled.
+- Feature-specific breadcrumbs and tags remain deferred until checkout, Stripe webhooks, order finalization, and admin workflows exist.
+
+Keep these options centralized in `/lib/observability/sentry-telemetry.ts` so future changes are reviewed as policy changes, not scattered Sentry configuration edits. When production traffic expectations and feature workflows are clearer, update this document, adjust the telemetry policy module, and add tests for the new sampling behavior.
+
 ## Source Maps And Releases
 
 Production Sentry events are most useful when they are tied to a release and uploaded source maps.
@@ -97,7 +108,13 @@ Browser init should rely on the release that `@sentry/nextjs` injects during the
 same build that uploads source maps; do not pass a separate public release value
 that can drift from the upload release.
 
-Do not block local runtime capture on deployment-specific source-map work, but do not consider production Sentry complete until release and source-map upload are configured and runtime events report the matching release.
+Do not block local runtime capture on deployment-specific source-map work. Production Sentry is complete when release and source-map upload are configured and runtime events report the matching release.
+
+Current deployment status:
+
+- Vercel preview and production builds are configured to upload Sentry source maps.
+- The developer smoke route has produced an event visible in the Sentry project.
+- Source-map upload has been verified during Vercel builds.
 
 ## Testing
 
