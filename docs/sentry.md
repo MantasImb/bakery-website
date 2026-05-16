@@ -1,5 +1,7 @@
 # Sentry Guidance
 
+Related decision: [`0003-keep-observability-provider-specific-code-behind-lib-observability.md`](./adr/0003-keep-observability-provider-specific-code-behind-lib-observability.md)
+
 This document defines how Sentry should be integrated and used in this project. It is durable project guidance: update it when observability policy changes, and follow it when adding new checkout, order, kitchen, admin, or integration behavior.
 
 ## Intent

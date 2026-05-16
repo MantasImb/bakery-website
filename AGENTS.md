@@ -10,6 +10,9 @@ Don't run `bun run dev`, unless asked.
 
 ## Architecture
 
+Use `CONTEXT.md` for canonical domain language before naming new concepts.
+Use `docs/adr/` for durable, trade-off-driven architecture and product decisions that would be surprising without context.
+Keep product scope in `docs/prd.md` and execution status in `docs/implementation-sequence.md`.
 Organize commerce and operations behavior around capability modules, not broad technical layers.
 Business rules for weekly menus, carts, checkout, orders, and kitchen/admin workflows should live inside the module that owns that capability.
 Keep shared modules limited to small cross-module primitives such as result types, base error shapes, money helpers, and IDs.

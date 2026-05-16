@@ -1,5 +1,11 @@
 # Implementation Sequence
 
+Related durable docs:
+
+- Domain language: [`../CONTEXT.md`](../CONTEXT.md)
+- Product scope: [`prd.md`](./prd.md)
+- Architectural decisions: [`adr/`](./adr/)
+
 This sequence is the recommended order for turning the product PRD into working software. It is not a permanent project plan; update it as implementation teaches us more.
 
 The guiding principle is to build cross-cutting foundations before they become expensive to retrofit, then move into the domain rules that make this product different from a normal brochure site.
