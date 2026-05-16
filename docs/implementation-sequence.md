@@ -13,13 +13,13 @@ The guiding principle is to build cross-cutting foundations before they become e
 
 ## Current Progress Snapshot
 
-Last reviewed: 2026-05-05
+Last reviewed: 2026-05-10
 
 | Step | Status | Evidence |
 | --- | --- | --- |
 | 1. Testing Foundation | Done | `jest.config.ts`, `jest.setup.ts`, `package.json` test scripts, `__tests__/page.test.tsx`, `app/layout.test.tsx`, and `components/ui/button.test.tsx` exist. Test placement rules are documented in `AGENTS.md`. |
 | 2. Application and Module Skeleton | Done | Capability module entry points exist for weekly menu, cart, checkout, orders, and kitchen logic. Shared primitives exist for result, domain error, money, and IDs. `AGENTS.md` documents capability ownership and minimal public exports. |
-| 3. Sentry Error Monitoring | Not started | No Sentry dependency or configuration is present. |
+| 3. Sentry Error Monitoring | Done | `@sentry/nextjs` is installed; `instrumentation.ts`, `instrumentation-client.ts`, `sentry.server.config.ts`, `sentry.edge.config.ts`, and `next.config.ts` configure runtime capture and source-map upload. `/lib/observability/` owns capture wrappers, sanitization, release, and telemetry policy. `/api/dev/sentry-smoke` has verified capture in Sentry, and `docs/sentry.md` records durable guidance. |
 | 4. Analytics Wrapper and Event Plan | Not started | No PostHog dependency, analytics wrapper, or event plan module is present. |
 | 5. Internationalization Skeleton | Not started | No locale routes or dictionary structure are present. |
 | 6. Database and Prisma Foundation | Not started | No Prisma dependency, schema, migration, or database configuration is present. |

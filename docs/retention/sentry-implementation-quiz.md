@@ -136,7 +136,7 @@ This quiz is based on the current Sentry guidance and implementation in this pro
 
 #### 22. What happens to `Number.POSITIVE_INFINITY` in an allowlisted context key?
 - [ ] A. It is kept as-is
-- [ ] B. It is dropped
+- [x] B. It is dropped
 - [ ] C. It is converted to `null`
 - [ ] D. It throws an error
 
@@ -147,14 +147,14 @@ This quiz is based on the current Sentry guidance and implementation in this pro
 - [ ] D. Full Stripe payload
 
 #### 24. What does the sanitizer keep inside `productQuantities`?
-- [ ] A. Only finite numeric quantities keyed by product ID
+- [x] A. Only finite numeric quantities keyed by product ID
 - [ ] B. Any nested cart item object
 - [ ] C. Product names and customer notes
 - [ ] D. String quantities
 
 #### 25. What happens when `productQuantities` is present but contains no valid finite numeric quantities?
 - [ ] A. It is included as an empty object
-- [ ] B. It is omitted from the sanitized context
+- [x] B. It is omitted from the sanitized context
 - [ ] C. It is converted to `null`
 - [ ] D. It causes capture to fail
 
@@ -162,28 +162,28 @@ This quiz is based on the current Sentry guidance and implementation in this pro
 - [ ] A. `stripeRefundId`
 - [ ] B. `pickupSlotId`
 - [ ] C. `environment`
-- [ ] D. `customerNotes`
+- [x] D. `customerNotes`
 
 #### 27. Which key is part of the safe context allowlist?
 - [ ] A. `fullOrder`
-- [ ] B. `stripeWebhookEventId`
+- [x] B. `stripeWebhookEventId`
 - [ ] C. `stripePayload`
 - [ ] D. `cookies`
 
 #### 28. What is the sanitizer's behavior for unknown keys?
 - [ ] A. It passes them through if they are strings
 - [ ] B. It stores them under `unknown`
-- [ ] C. It drops them
+- [x] C. It drops them
 - [ ] D. It throws an exception
 
 #### 29. What does `sanitizeObservabilityContext(undefined)` return?
 - [ ] A. `undefined`
 - [ ] B. `null`
-- [ ] C. `{}`
+- [x] C. `{}`
 - [ ] D. `{ observability: {} }`
 
 #### 30. Which safe context key would best describe the deployment label of a captured event?
-- [ ] A. `environment`
+- [x] A. `environment`
 - [ ] B. `customerName`
 - [ ] C. `rawRequestBody`
 - [ ] D. `apiKey`
@@ -192,24 +192,24 @@ This quiz is based on the current Sentry guidance and implementation in this pro
 
 #### 31. Which public wrapper function captures thrown or unexpected errors?
 - [ ] A. `captureFailure`
-- [ ] B. `captureException`
+- [x] B. `captureException`
 - [ ] C. `captureErrorState`
 - [ ] D. `captureTrace`
 
 #### 32. Which public wrapper function captures notable diagnostics that are not thrown exceptions?
-- [ ] A. `captureMessage`
+- [x] A. `captureMessage`
 - [ ] B. `captureBreadcrumb`
 - [ ] C. `captureReplay`
 - [ ] D. `captureSpan`
 
 #### 33. What does the wrapper do before sending context to Sentry?
 - [ ] A. Sends it unchanged
-- [ ] B. Sanitizes it through `sanitizeObservabilityContext`
+- [x] B. Sanitizes it through `sanitizeObservabilityContext`
 - [ ] C. Serializes it into a raw request body
 - [ ] D. Stores it in cookies
 
 #### 34. Why does `captureException` use `Sentry.withScope`?
-- [ ] A. To keep context attached only to the current Sentry event
+- [x] A. To keep context attached only to the current Sentry event
 - [ ] B. To disable Sentry globally
 - [ ] C. To upload source maps
 - [ ] D. To initialize browser replay
@@ -217,7 +217,7 @@ This quiz is based on the current Sentry guidance and implementation in this pro
 #### 35. Which Sentry context section name is used by `setObservabilityContext`?
 - [ ] A. `workflow`
 - [ ] B. `commerce`
-- [ ] C. `observability`
+- [x] C. `observability`
 - [ ] D. `debug`
 
 #### 36. What happens if the sanitized context is empty?
@@ -228,25 +228,25 @@ This quiz is based on the current Sentry guidance and implementation in this pro
 
 #### 37. What does `captureException` return?
 - [ ] A. A boolean
-- [ ] B. The Sentry event ID string
+- [x] B. The Sentry event ID string
 - [ ] C. The sanitized context
 - [ ] D. A `Response`
 
 #### 38. What does `captureMessage` return?
-- [ ] A. The Sentry event ID string
+- [x] A. The Sentry event ID string
 - [ ] B. The original message
 - [ ] C. A promise of a response
 - [ ] D. The Sentry scope
 
 #### 39. Which module owns the `ObservabilityContext` type?
 - [ ] A. `next.config.ts`
-- [ ] B. `lib/observability/index.ts`
+- [x] B. `lib/observability/index.ts`
 - [ ] C. `instrumentation.ts`
 - [ ] D. `app/layout.tsx`
 
 #### 40. What is the current relationship between `SanitizedObservabilityContext` and `ObservabilityContext`?
 - [ ] A. They are unrelated types
-- [ ] B. `SanitizedObservabilityContext` currently aliases `ObservabilityContext`
+- [x] B. `SanitizedObservabilityContext` currently aliases `ObservabilityContext`
 - [ ] C. `SanitizedObservabilityContext` only allows strings
 - [ ] D. `SanitizedObservabilityContext` is imported from Sentry
 
@@ -255,13 +255,13 @@ This quiz is based on the current Sentry guidance and implementation in this pro
 #### 41. Which package provides the Sentry Next.js SDK in this project?
 - [ ] A. `@sentry/react`
 - [ ] B. `@sentry/browser`
-- [ ] C. `@sentry/nextjs`
+- [x] C. `@sentry/nextjs`
 - [ ] D. `@sentry/node`
 
 #### 42. Which installed version range is declared for `@sentry/nextjs`?
 - [ ] A. `^8.0.0`
 - [ ] B. `^9.0.0`
-- [ ] C. `^10.51.0`
+- [x] C. `^10.51.0`
 - [ ] D. `latest`
 
 #### 43. Which root-level file registers server runtime Sentry setup based on `NEXT_RUNTIME`?
@@ -272,43 +272,43 @@ This quiz is based on the current Sentry guidance and implementation in this pro
 
 #### 44. What does `instrumentation.ts` import when `process.env.NEXT_RUNTIME === "nodejs"`?
 - [ ] A. `./sentry.edge.config`
-- [ ] B. `./sentry.server.config`
+- [x] B. `./sentry.server.config`
 - [ ] C. `./instrumentation-client`
 - [ ] D. `./next.config`
 
 #### 45. What does `instrumentation.ts` import when `process.env.NEXT_RUNTIME === "edge"`?
-- [ ] A. `./sentry.edge.config`
+- [x] A. `./sentry.edge.config`
 - [ ] B. `./sentry.server.config`
 - [ ] C. `./lib/observability/index`
 - [ ] D. `./package.json`
 
 #### 46. Why are the server and edge Sentry config imports inside runtime branches?
-- [ ] A. To keep Node-only and Edge-only setup out of the wrong runtime bundle
+- [x] A. To keep Node-only and Edge-only setup out of the wrong runtime bundle
 - [ ] B. To avoid all Sentry initialization
 - [ ] C. To make tests slower
 - [ ] D. To bypass source-map upload
 
 #### 47. Which Next hook is exported for request-time server failures?
 - [ ] A. `onRouteChangeStart`
-- [ ] B. `onRequestError`
+- [x] B. `onRequestError`
 - [ ] C. `onBuildError`
 - [ ] D. `onSmokeTest`
 
 #### 48. What is `onRequestError` assigned to?
 - [ ] A. `captureException`
-- [ ] B. `Sentry.captureRequestError`
+- [x] B. `Sentry.captureRequestError`
 - [ ] C. `Sentry.captureMessage`
 - [ ] D. `sanitizeObservabilityContext`
 
 #### 49. Which file initializes browser Sentry capture?
 - [ ] A. `sentry.server.config.ts`
 - [ ] B. `sentry.edge.config.ts`
-- [ ] C. `instrumentation-client.ts`
+- [x] C. `instrumentation-client.ts`
 - [ ] D. `next.config.ts`
 
 #### 50. Which browser hook is exported from `instrumentation-client.ts`?
 - [ ] A. `onRequestError`
-- [ ] B. `onRouterTransitionStart`
+- [x] B. `onRouterTransitionStart`
 - [ ] C. `onWebhookError`
 - [ ] D. `onBeforeUnload`
 
