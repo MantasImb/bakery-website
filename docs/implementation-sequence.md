@@ -92,10 +92,32 @@ Analytics should be baked into user flows, but event names should not be guessed
 Actionable outcomes:
 
 - [ ] Add a small analytics wrapper instead of calling PostHog directly throughout the app.
-- [ ] Define initial event names for the expected funnel: homepage CTA click, product add, cart view, checkout started, payment success, and checkout abandonment.
-- [ ] Document what properties are safe and useful to send.
+- [x] Define initial event names for the expected funnel: `homepage_cta_clicked`, `weekly_menu_viewed`, `product_added`, `cart_viewed`, `checkout_started`, `pickup_slot_selected`, `payment_started`, `payment_succeeded`, and `order_confirmation_viewed`.
+- [x] Document what properties are safe and useful to send in [`posthog.md`](./posthog.md).
 - [ ] Delay full instrumentation until each feature flow exists.
 - [ ] Define what full instrumentation would look like and document it.
+
+Completion plan:
+
+- [ ] Split `/lib/observability/` into provider-specific files before adding more analytics behavior:
+  - `index.ts`: public facade that re-exports project-owned observability APIs only.
+  - `sentry.ts`: Sentry adapter that imports `@sentry/nextjs` and owns `captureException`, `captureMessage`, and Sentry scope attachment.
+  - `sentry-context.ts`: Sentry context types, safe context keys, and context sanitization.
+  - `posthog.ts`: PostHog adapter that imports `posthog-js` and owns SDK initialization and low-level capture.
+  - `analytics.ts`: provider-neutral analytics facade that owns app event names, event property shaping, and calls the PostHog adapter.
+- [ ] Move the existing Sentry sanitizer tests beside the new Sentry context owner, and add tests for PostHog initialization and capture behavior.
+- [ ] Replace wizard-generated free-form analytics event strings in components with named app-level analytics helper functions. Map the primary homepage ordering CTA to `homepage_cta_clicked` and keep navigation or visit-planning clicks only behind a restricted secondary-engagement helper.
+- [ ] Prepare server-side analytics without overcommitting to unfinished checkout behavior:
+  - add the minimal server PostHog adapter and dependency;
+  - define a provider-neutral server event API in `analytics.ts`;
+  - allow an optional analytics visitor ID sourced from PostHog's anonymous browser `distinct_id`;
+  - keep server events safe when the visitor ID is absent;
+  - suppress person profile creation for anonymous visitor server events;
+  - keep concrete checkout reservation, Stripe, and persistence wiring deferred until those flows exist.
+- [ ] Add a small project-owned analytics enablement check that defaults to enabled when PostHog is configured, while leaving consent or notice UI as a future policy decision.
+- [ ] Model checkout abandonment as two signals: `checkout_exited` for soft browser exits from checkout, and `checkout_reservation_expired` for the real lifecycle event that releases a checkout reservation.
+- [ ] Keep [`posthog.md`](./posthog.md) updated as the analytics policy evolves, including event naming, safe property rules, disabled PostHog defaults, environment variables, analytics visitor identity, server event posture, consent posture, and the `/ingest` proxy paths.
+- [ ] Mark only the analytics wrapper outcome complete after the facade, adapter split, typed browser/server event contracts, enablement gate, tests, and documentation are in place. Keep actual product add, cart, checkout, payment success, checkout exit, reservation expiry, and order confirmation instrumentation deferred until those flows exist.
 
 ## 5. Internationalization Skeleton
 
