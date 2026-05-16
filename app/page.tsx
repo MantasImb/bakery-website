@@ -1,6 +1,5 @@
-import { Button } from "@/components/ui/button";
-
-const navigationItems = ["Menu", "Visit", "About"];
+import { NavLinks, OrderAheadButton } from "@/components/home/NavLinks";
+import { HeroActions } from "@/components/home/HeroActions";
 
 const dailyDetails = [
   {
@@ -35,21 +34,9 @@ export default function Home() {
             Hearth & Flour
           </a>
 
-          <div className="hidden items-center gap-7 text-sm text-muted-foreground sm:flex">
-            {navigationItems.map((item) => (
-              <a
-                key={item}
-                href={`#${item.toLowerCase()}`}
-                className="transition-colors hover:text-foreground"
-              >
-                {item}
-              </a>
-            ))}
-          </div>
+          <NavLinks />
 
-          <Button asChild variant="outline" size="sm">
-            <a href="#visit">Order ahead</a>
-          </Button>
+          <OrderAheadButton />
         </nav>
       </header>
 
@@ -69,14 +56,7 @@ export default function Home() {
             simple coffee for daily pickup in the neighborhood.
           </p>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Button asChild size="lg">
-              <a href="#menu">View today&apos;s menu</a>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <a href="#visit">Plan a visit</a>
-            </Button>
-          </div>
+          <HeroActions />
         </div>
 
         <div

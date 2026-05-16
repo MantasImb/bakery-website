@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/nextjs";
+import { initializeBrowserAnalytics } from "./lib/observability/analytics";
 import { resolveSentryBrowserTelemetryOptions } from "./lib/observability/sentry-telemetry";
 
 const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
@@ -22,3 +23,5 @@ Sentry.init({
 // it only for navigation instrumentation; initial telemetry policy leaves trace
 // capture unsampled until real feature flows define useful sampling.
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
+
+initializeBrowserAnalytics();

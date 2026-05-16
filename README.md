@@ -9,6 +9,7 @@ Bakery Website is a Next.js application for a weekly bakery preorder storefront 
 - [docs/implementation-sequence.md](./docs/implementation-sequence.md) tracks the recommended implementation order and current progress.
 - [docs/adr/](./docs/adr/) records durable architectural and product decisions.
 - [docs/sentry.md](./docs/sentry.md) defines the observability and Sentry policy.
+- [docs/routing.md](./docs/routing.md) records routing guidance for rewrites, redirects, and canonical URL behavior.
 - [docs/features/](./docs/features/) is reserved for active or upcoming feature-specific PRDs.
 
 ## Development Notes
@@ -47,3 +48,8 @@ Sentry error monitoring uses these variables:
 - `SENTRY_DEV_SMOKE_TOKEN`: Secret token required to call the developer smoke route when enabled.
 
 Vercel Preview and Production builds require `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT`, and either `SENTRY_RELEASE` or Vercel's `VERCEL_GIT_COMMIT_SHA` system environment variable so source-map upload cannot be skipped accidentally. Browser runtime events use the release injected by `@sentry/nextjs` during the build, so do not configure a separate public release variable that can drift from the uploaded source-map release.
+
+PostHog browser analytics uses these variables:
+
+- `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN`: Public PostHog project token. Leave empty to disable PostHog capture.
+- `NEXT_PUBLIC_POSTHOG_HOST`: PostHog UI host, such as `https://eu.posthog.com`.
