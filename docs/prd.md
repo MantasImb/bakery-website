@@ -1,5 +1,11 @@
 # PRD: Build Weekly Bakery Preorder Storefront and Admin Kitchen Workflow
 
+Related durable docs:
+
+- Domain language: [`../CONTEXT.md`](../CONTEXT.md)
+- Architectural decisions: [`adr/`](./adr/)
+- Implementation sequence: [`implementation-sequence.md`](./implementation-sequence.md)
+
 ## Problem Statement
 
 The bakery needs a website that supports a weekly preorder model instead of a permanent product catalog. Each week, the baker publishes a small selection of pastries or baked goods, customers order from that limited menu, and the bakery prepares orders for fixed weekend pickup slots.

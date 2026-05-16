@@ -7,7 +7,7 @@
 
 tmux send-keys -t neovim 'nvim .' C-m
 # `exec zsh` needs to be added because otherwise the shell will exit when the command finishes.
-tmux neww -n "bun dev" 'bun install && bun dev; exec zsh'
+tmux neww -n "bun dev" 'bun install && bun dev -p 3010; exec zsh'
 tmux neww -n "terminal" 'git status; exec zsh'
 tmux rename-window -t 1 neovim
 tmux select-window -t neovim
