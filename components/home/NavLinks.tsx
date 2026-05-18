@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { captureBrowserAnalyticsEvent } from "@/lib/observability/analytics";
+import { recordSecondaryEngagement } from "@/lib/observability/analytics";
 
 const navigationItems = ["Menu", "Visit", "About"];
 
@@ -14,7 +14,7 @@ export function NavLinks() {
           href={`#${item.toLowerCase()}`}
           className="transition-colors hover:text-foreground"
           onClick={() =>
-            captureBrowserAnalyticsEvent("nav_item_clicked", {
+            recordSecondaryEngagement("navigation_clicked", {
               item: item.toLowerCase(),
             })
           }
@@ -31,7 +31,11 @@ export function OrderAheadButton() {
     <Button asChild variant="outline" size="sm">
       <a
         href="#visit"
-        onClick={() => captureBrowserAnalyticsEvent("order_ahead_clicked")}
+        onClick={() =>
+          recordSecondaryEngagement("visit_planning_clicked", {
+            cta: "order_ahead",
+          })
+        }
       >
         Order ahead
       </a>

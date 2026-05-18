@@ -53,3 +53,8 @@ PostHog browser analytics uses these variables:
 
 - `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN`: Public PostHog project token. Leave empty to disable PostHog capture.
 - `NEXT_PUBLIC_POSTHOG_HOST`: PostHog UI host, such as `https://eu.posthog.com`.
+
+PostHog server analytics uses these variables:
+
+- `POSTHOG_PROJECT_API_KEY`: Server-side PostHog project API key. Leave empty to disable server capture.
+- `POSTHOG_HOST`: PostHog API host, such as `https://eu.posthog.com`.

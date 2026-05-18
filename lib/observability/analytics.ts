@@ -1,105 +1,43 @@
 "use client";
 
-import posthog from "posthog-js";
+import {
+  captureBrowserPostHogEvent,
+  getBrowserPostHogDistinctId,
+  initializeBrowserPostHog,
+} from "./posthog";
+import {
+  sanitizeAnalyticsProperties,
+  type AnalyticsProperties,
+} from "./analytics-properties";
 
-type AnalyticsScalar = string | number | boolean;
+type SecondaryEngagementEvent =
+  | "navigation_clicked"
+  | "visit_planning_clicked";
 
-export type AnalyticsProperties = Record<
-  string,
-  AnalyticsScalar | null | undefined
->;
-
-const DISALLOWED_ANALYTICS_KEYS = new Set([
-  "apikey",
-  "authorization",
-  "cart",
-  "cookies",
-  "customername",
-  "customernotes",
-  "email",
-  "formdata",
-  "fullorder",
-  "order",
-  "phone",
-  "rawrequestbody",
-  "stripepayload",
-]);
-
-let isBrowserAnalyticsInitialized = false;
+export { sanitizeAnalyticsProperties, type AnalyticsProperties };
 
 export function initializeBrowserAnalytics() {
-  const posthogProjectToken = process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN;
-
-  if (!posthogProjectToken) {
-    return;
-  }
-
-  try {
-    posthog.init(posthogProjectToken, {
-      api_host: "/ingest",
-      ui_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
-      defaults: "2026-01-30",
-      capture_exceptions: false,
-      autocapture: false,
-      capture_pageview: false,
-      disable_session_recording: true,
-      person_profiles: "never",
-      debug: process.env.NODE_ENV === "development",
-    });
-    isBrowserAnalyticsInitialized = true;
-  } catch {
-    // Analytics must not break application startup.
-  }
+  initializeBrowserPostHog();
 }
 
-export function captureBrowserAnalyticsEvent(
+function captureBrowserAnalyticsEvent(
   eventName: string,
   properties?: AnalyticsProperties,
 ) {
-  if (!isBrowserAnalyticsInitialized) {
-    return;
-  }
-
-  try {
-    posthog.capture(eventName, sanitizeAnalyticsProperties(properties));
-  } catch {
-    // Analytics must not break user interactions.
-  }
+  captureBrowserPostHogEvent(eventName, sanitizeAnalyticsProperties(properties));
 }
 
-export function sanitizeAnalyticsProperties(
+export function recordHomepageCtaClicked(cta: "view_menu") {
+  captureBrowserAnalyticsEvent("homepage_cta_clicked", { cta });
+}
+
+export function recordSecondaryEngagement(
+  eventName: SecondaryEngagementEvent,
   properties?: AnalyticsProperties,
-): Record<string, AnalyticsScalar> | undefined {
-  if (!properties) {
-    return undefined;
-  }
-
-  const sanitized: Record<string, AnalyticsScalar> = {};
-
-  for (const [key, value] of Object.entries(properties)) {
-    if (
-      DISALLOWED_ANALYTICS_KEYS.has(normalizeAnalyticsKey(key)) ||
-      value == null
-    ) {
-      continue;
-    }
-
-    if (isAnalyticsScalar(value)) {
-      sanitized[key] = value;
-    }
-  }
-
-  return Object.keys(sanitized).length > 0 ? sanitized : undefined;
+) {
+  captureBrowserAnalyticsEvent(eventName, properties);
 }
 
-function normalizeAnalyticsKey(key: string): string {
-  return key.replace(/[\s_-]/g, "").toLowerCase();
-}
-
-function isAnalyticsScalar(value: unknown): value is AnalyticsScalar {
-  return (
-    typeof value === "string" ||
-    typeof value === "boolean" ||
-    (typeof value === "number" && Number.isFinite(value))
-  );
+export function getAnalyticsVisitorId(): string | undefined {
+  return getBrowserPostHogDistinctId();
 }

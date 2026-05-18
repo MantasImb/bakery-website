@@ -19,7 +19,7 @@ PostHog is not the source of truth for orders, payments, stock, customers, fulfi
 Keep PostHog behind `/lib/observability/`.
 
 - Framework-required browser setup may call the project analytics initializer.
-- Code inside `/lib/observability/` may import `posthog-js` directly.
+- Code inside `/lib/observability/` may import `posthog-js` or `posthog-node` directly.
 - Application features should use the project-owned analytics facade instead of importing PostHog directly.
 - Capability modules such as `modules/cart`, `modules/weekly-menu`, `modules/checkout`, `modules/orders`, and `modules/kitchen` should keep domain behavior provider-agnostic. UI boundaries, route handlers, server actions, or service orchestration code decide what analytics events are emitted.
 
@@ -31,11 +31,11 @@ Use `analytics.ts` for app-level event names, property shaping, and safe public 
 
 Server-side analytics should follow the same ownership rule when checkout and payment lifecycle events exist:
 
-`route handler, server action, or webhook boundary -> analytics.ts -> server PostHog adapter`
+`route handler, server action, or webhook boundary -> analytics-server.ts -> posthog-server.ts -> posthog-node`
 
-The current foundation should prepare the typed server event contract, shared event names, property sanitization, and optional analytics visitor ID plumbing. It should avoid hard-coding checkout, Stripe, or persistence details before those flows exist.
+`analytics-server.ts` is intentionally separate from the browser analytics facade so Next.js does not bundle the Node PostHog SDK into client components. The current foundation prepares the typed server event contract, shared property sanitization, and optional analytics visitor ID plumbing. It avoids hard-coding checkout, Stripe, or persistence details before those flows exist.
 
-The current foundation should include a minimal inert server PostHog adapter so server capture is ready before checkout work begins. The adapter should initialize only when server PostHog configuration is present, expose a provider-neutral server capture function through `analytics.ts`, no-op safely when disabled, suppress person profile creation for anonymous visitor events, and avoid emitting real server events until checkout, payment, or reservation lifecycle behavior exists.
+The current foundation includes a minimal inert server PostHog adapter so server capture is ready before checkout work begins. The adapter initializes only when server PostHog configuration is present, exposes a provider-neutral server capture function through `analytics-server.ts`, no-ops safely when disabled, suppresses person profile creation for anonymous visitor events, and avoids emitting real server events until checkout, payment, or reservation lifecycle behavior exists.
 
 ## Current Baseline
 

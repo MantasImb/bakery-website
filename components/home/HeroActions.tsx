@@ -1,7 +1,10 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { captureBrowserAnalyticsEvent } from "@/lib/observability/analytics";
+import {
+  recordHomepageCtaClicked,
+  recordSecondaryEngagement,
+} from "@/lib/observability/analytics";
 
 export function HeroActions() {
   return (
@@ -9,7 +12,7 @@ export function HeroActions() {
       <Button asChild size="lg">
         <a
           href="#menu"
-          onClick={() => captureBrowserAnalyticsEvent("view_menu_clicked")}
+          onClick={() => recordHomepageCtaClicked("view_menu")}
         >
           View today&apos;s menu
         </a>
@@ -17,7 +20,11 @@ export function HeroActions() {
       <Button asChild variant="outline" size="lg">
         <a
           href="#visit"
-          onClick={() => captureBrowserAnalyticsEvent("plan_visit_clicked")}
+          onClick={() =>
+            recordSecondaryEngagement("visit_planning_clicked", {
+              cta: "plan_visit",
+            })
+          }
         >
           Plan a visit
         </a>
