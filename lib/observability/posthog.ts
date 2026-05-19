@@ -9,6 +9,10 @@ import {
 let isBrowserPostHogInitialized = false;
 
 export function initializeBrowserPostHog() {
+  if (isBrowserPostHogInitialized) {
+    return;
+  }
+
   const posthogProjectToken = browserPostHogProjectToken();
 
   if (!isBrowserAnalyticsEnabled() || !posthogProjectToken) {

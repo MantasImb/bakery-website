@@ -83,7 +83,7 @@ Actionable outcomes:
 
 ## 4. Analytics Wrapper and Event Plan
 
-Status: In progress
+Status: Done
 
 Introduce the PostHog abstraction early, but do not instrument everything immediately.
 

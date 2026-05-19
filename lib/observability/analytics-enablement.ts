@@ -1,9 +1,13 @@
 export function isBrowserAnalyticsEnabled(): boolean {
-  return Boolean(process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN);
+  const token = process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN;
+
+  return Boolean(token && token.trim());
 }
 
 export function isServerAnalyticsEnabled(): boolean {
-  return Boolean(process.env.POSTHOG_PROJECT_API_KEY);
+  const projectApiKey = process.env.POSTHOG_PROJECT_API_KEY;
+
+  return Boolean(projectApiKey && projectApiKey.trim());
 }
 
 export function browserPostHogProjectToken(): string | undefined {

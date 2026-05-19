@@ -14,6 +14,11 @@ type SecondaryEngagementEvent =
   | "navigation_clicked"
   | "visit_planning_clicked";
 
+const SECONDARY_ENGAGEMENT_EVENTS: ReadonlySet<string> = new Set([
+  "navigation_clicked",
+  "visit_planning_clicked",
+]);
+
 export { sanitizeAnalyticsProperties, type AnalyticsProperties };
 
 export function initializeBrowserAnalytics() {
@@ -32,9 +37,13 @@ export function recordHomepageCtaClicked(cta: "view_menu") {
 }
 
 export function recordSecondaryEngagement(
-  eventName: SecondaryEngagementEvent,
+  eventName: SecondaryEngagementEvent | string,
   properties?: AnalyticsProperties,
 ) {
+  if (!SECONDARY_ENGAGEMENT_EVENTS.has(eventName)) {
+    return;
+  }
+
   captureBrowserAnalyticsEvent(eventName, properties);
 }
 

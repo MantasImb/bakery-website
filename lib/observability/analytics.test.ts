@@ -34,11 +34,14 @@ describe("sanitizeAnalyticsProperties", () => {
         customerName: "Ada Lovelace",
         customerNotes: "birthday order",
         raw_request_body: "raw",
+        "raw.request/body": "raw",
         formData: "form",
         cookies: "session=secret",
         authorization: "Bearer secret",
         apiKey: "secret",
+        "api.key": "secret",
         stripePayload: "payload",
+        "stripe/payload": "payload",
         cart: "cart",
         order: "order",
         fullOrder: "full-order",
@@ -82,6 +85,12 @@ describe("recordSecondaryEngagement", () => {
       "navigation_clicked",
       { item: "menu" },
     );
+
+    jest.clearAllMocks();
+
+    recordSecondaryEngagement("forbidden_event", { item: "menu" });
+
+    expect(captureBrowserPostHogEvent).not.toHaveBeenCalled();
   });
 });
 

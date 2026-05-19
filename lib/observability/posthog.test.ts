@@ -61,6 +61,22 @@ describe("initializeBrowserPostHog", () => {
     });
   });
 
+  it("initializes only once", () => {
+    process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN = "public-token";
+
+    jest.isolateModules(() => {
+      const isolatedPostHog = jest.requireMock("posthog-js").default as typeof posthog;
+      const {
+        initializeBrowserPostHog: initializeIsolatedBrowserPostHog,
+      } = jest.requireActual("./posthog") as typeof import("./posthog");
+
+      initializeIsolatedBrowserPostHog();
+      initializeIsolatedBrowserPostHog();
+
+      expect(isolatedPostHog.init).toHaveBeenCalledTimes(1);
+    });
+  });
+
   it("does not capture when browser analytics is disabled", () => {
     process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN = "public-token";
     initializeBrowserPostHog();

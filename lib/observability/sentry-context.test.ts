@@ -73,4 +73,14 @@ describe("sanitizeSentryContext", () => {
       },
     });
   });
+
+  it("strips query params and fragments from route context", () => {
+    const sanitized = sanitizeSentryContext({
+      route: "/checkout?email=ada@example.com#payment",
+    });
+
+    expect(sanitized).toEqual({
+      route: "/checkout",
+    });
+  });
 });

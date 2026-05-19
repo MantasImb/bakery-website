@@ -62,6 +62,11 @@ export function sanitizeSentryContext(
     }
 
     if (isSafeScalar(value)) {
+      if (key === "route" && typeof value === "string") {
+        sanitized.route = normalizeRoute(value);
+        continue;
+      }
+
       sanitized[key] = value;
     }
   }
@@ -79,6 +84,13 @@ function isSafeScalar(value: unknown): value is SafeScalar {
 
 function isSafeContextKey(key: string): key is SafeContextKey {
   return SAFE_CONTEXT_KEY_SET.has(key);
+}
+
+function normalizeRoute(route: string): string {
+  const [withoutFragment] = route.split("#", 1);
+  const [pathname] = withoutFragment.split("?", 1);
+
+  return pathname || "/";
 }
 
 function sanitizeProductQuantities(value: unknown): ProductQuantities {

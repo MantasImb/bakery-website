@@ -5,10 +5,13 @@
 import { PostHog } from "posthog-node";
 import { captureServerPostHogEvent } from "./posthog-server";
 
+const mockPostHogClient = {
+  capture: jest.fn(),
+  shutdown: jest.fn(),
+};
+
 jest.mock("posthog-node", () => ({
-  PostHog: jest.fn().mockImplementation(() => ({
-    capture: jest.fn(),
-  })),
+  PostHog: jest.fn().mockImplementation(() => mockPostHogClient),
 }));
 
 const originalProjectApiKey = process.env.POSTHOG_PROJECT_API_KEY;
@@ -29,6 +32,8 @@ describe("captureServerPostHogEvent", () => {
     }
 
     jest.clearAllMocks();
+    mockPostHogClient.capture.mockReset();
+    mockPostHogClient.shutdown.mockReset();
   });
 
   it("skips capture when server analytics is disabled", () => {
@@ -57,7 +62,7 @@ describe("captureServerPostHogEvent", () => {
       host: "https://eu.posthog.com",
       disableGeoip: true,
     });
-    expect(jest.mocked(PostHog).mock.results[0].value.capture).toHaveBeenCalledWith({
+    expect(mockPostHogClient.capture).toHaveBeenCalledWith({
       distinctId: "visitor_123",
       event: "checkout_reservation_expired",
       properties: {
@@ -82,7 +87,7 @@ describe("captureServerPostHogEvent", () => {
       },
     });
 
-    expect(jest.mocked(PostHog).mock.results[0].value.capture).toHaveBeenCalledWith({
+    expect(mockPostHogClient.capture).toHaveBeenCalledWith({
       distinctId: "visitor_123",
       event: "payment_succeeded",
       properties: {
@@ -91,5 +96,28 @@ describe("captureServerPostHogEvent", () => {
         $process_person_profile: false,
       },
     });
+  });
+
+  it("swallows server PostHog capture failures", () => {
+    const consoleError = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    process.env.POSTHOG_PROJECT_API_KEY = "server-key";
+    mockPostHogClient.capture.mockImplementation(() => {
+      throw new Error("capture failed");
+    });
+
+    expect(() =>
+      captureServerPostHogEvent({
+        eventName: "payment_succeeded",
+        analyticsVisitorId: "visitor_123",
+      }),
+    ).not.toThrow();
+    expect(consoleError).toHaveBeenCalledWith(
+      "PostHog server analytics capture failed",
+      expect.any(Error),
+    );
+
+    consoleError.mockRestore();
   });
 });

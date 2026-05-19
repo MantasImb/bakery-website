@@ -47,7 +47,7 @@ export function sanitizeAnalyticsProperties(
 }
 
 function normalizeAnalyticsKey(key: string): string {
-  return key.replace(/[\s_-]/g, "").toLowerCase();
+  return key.replace(/[^a-z0-9]/gi, "").toLowerCase();
 }
 
 function isAnalyticsScalar(value: unknown): value is AnalyticsScalar {

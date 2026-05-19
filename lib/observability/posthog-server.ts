@@ -14,6 +14,9 @@ export type ServerPostHogEvent = {
   properties?: AnalyticsProperties;
 };
 
+let serverPostHogClient: PostHog | undefined;
+let isShutdownHookRegistered = false;
+
 export function captureServerPostHogEvent(event: ServerPostHogEvent): void {
   const projectApiKey = serverPostHogProjectApiKey();
 
@@ -21,17 +24,47 @@ export function captureServerPostHogEvent(event: ServerPostHogEvent): void {
     return;
   }
 
-  const posthog = new PostHog(projectApiKey, {
-    host: process.env.POSTHOG_HOST,
-    disableGeoip: true,
-  });
+  try {
+    const posthog = getServerPostHogClient(projectApiKey);
 
-  posthog.capture({
-    distinctId: event.analyticsVisitorId ?? "anonymous_server",
-    event: event.eventName,
-    properties: {
-      ...sanitizeAnalyticsProperties(event.properties),
-      $process_person_profile: false,
-    },
+    posthog.capture({
+      distinctId: event.analyticsVisitorId ?? "anonymous_server",
+      event: event.eventName,
+      properties: {
+        ...sanitizeAnalyticsProperties(event.properties),
+        $process_person_profile: false,
+      },
+    });
+  } catch (error) {
+    console.error("PostHog server analytics capture failed", error);
+  }
+}
+
+function getServerPostHogClient(projectApiKey: string): PostHog {
+  if (!serverPostHogClient) {
+    serverPostHogClient = new PostHog(projectApiKey, {
+      host: process.env.POSTHOG_HOST,
+      disableGeoip: true,
+    });
+    registerPostHogShutdownHook();
+  }
+
+  return serverPostHogClient;
+}
+
+function registerPostHogShutdownHook(): void {
+  if (isShutdownHookRegistered) {
+    return;
+  }
+
+  process.once("beforeExit", () => {
+    if (!serverPostHogClient) {
+      return;
+    }
+
+    Promise.resolve(serverPostHogClient.shutdown()).catch((error) => {
+      console.error("PostHog server analytics shutdown failed", error);
+    });
   });
+  isShutdownHookRegistered = true;
 }

@@ -33,9 +33,27 @@ describe("analytics enablement", () => {
     expect(isBrowserAnalyticsEnabled()).toBe(false);
   });
 
+  it("disables browser analytics when PostHog configuration is blank", () => {
+    process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN = "   ";
+
+    expect(isBrowserAnalyticsEnabled()).toBe(false);
+  });
+
   it("defaults server analytics to enabled when PostHog is configured", () => {
     process.env.POSTHOG_PROJECT_API_KEY = "server-key";
 
     expect(isServerAnalyticsEnabled()).toBe(true);
+  });
+
+  it("defaults server analytics to disabled when PostHog is not configured", () => {
+    delete process.env.POSTHOG_PROJECT_API_KEY;
+
+    expect(isServerAnalyticsEnabled()).toBe(false);
+  });
+
+  it("disables server analytics when PostHog configuration is blank", () => {
+    process.env.POSTHOG_PROJECT_API_KEY = "   ";
+
+    expect(isServerAnalyticsEnabled()).toBe(false);
   });
 });
