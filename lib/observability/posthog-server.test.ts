@@ -2,9 +2,6 @@
  * @jest-environment node
  */
 
-import { PostHog } from "posthog-node";
-import { captureServerPostHogEvent } from "./posthog-server";
-
 const mockPostHogClient = {
   capture: jest.fn(),
   shutdown: jest.fn(),
@@ -16,6 +13,17 @@ jest.mock("posthog-node", () => ({
 
 const originalProjectApiKey = process.env.POSTHOG_PROJECT_API_KEY;
 const originalPostHogHost = process.env.POSTHOG_HOST;
+
+function loadPostHogServerModule() {
+  const { PostHog } = jest.requireMock("posthog-node") as {
+    PostHog: jest.Mock;
+  };
+  const { captureServerPostHogEvent } = jest.requireActual(
+    "./posthog-server",
+  ) as typeof import("./posthog-server");
+
+  return { PostHog, captureServerPostHogEvent };
+}
 
 describe("captureServerPostHogEvent", () => {
   afterEach(() => {
@@ -34,9 +42,12 @@ describe("captureServerPostHogEvent", () => {
     jest.clearAllMocks();
     mockPostHogClient.capture.mockReset();
     mockPostHogClient.shutdown.mockReset();
+    jest.restoreAllMocks();
+    jest.resetModules();
   });
 
   it("skips capture when server analytics is disabled", () => {
+    const { PostHog, captureServerPostHogEvent } = loadPostHogServerModule();
     delete process.env.POSTHOG_PROJECT_API_KEY;
 
     captureServerPostHogEvent({
@@ -49,6 +60,7 @@ describe("captureServerPostHogEvent", () => {
   });
 
   it("suppresses person profile creation for anonymous visitor events", () => {
+    const { PostHog, captureServerPostHogEvent } = loadPostHogServerModule();
     process.env.POSTHOG_PROJECT_API_KEY = "server-key";
     process.env.POSTHOG_HOST = "https://eu.posthog.com";
 
@@ -73,6 +85,7 @@ describe("captureServerPostHogEvent", () => {
   });
 
   it("keeps safe scalar properties and removes disallowed properties", () => {
+    const { captureServerPostHogEvent } = loadPostHogServerModule();
     process.env.POSTHOG_PROJECT_API_KEY = "server-key";
 
     captureServerPostHogEvent({
@@ -99,6 +112,7 @@ describe("captureServerPostHogEvent", () => {
   });
 
   it("swallows server PostHog capture failures", () => {
+    const { captureServerPostHogEvent } = loadPostHogServerModule();
     const consoleError = jest
       .spyOn(console, "error")
       .mockImplementation(() => undefined);
@@ -117,7 +131,5 @@ describe("captureServerPostHogEvent", () => {
       "PostHog server analytics capture failed",
       expect.any(Error),
     );
-
-    consoleError.mockRestore();
   });
 });

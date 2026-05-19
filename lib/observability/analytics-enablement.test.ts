@@ -1,6 +1,8 @@
 import {
+  browserPostHogProjectToken,
   isBrowserAnalyticsEnabled,
   isServerAnalyticsEnabled,
+  serverPostHogProjectApiKey,
 } from "./analytics-enablement";
 
 const originalBrowserToken = process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN;
@@ -39,6 +41,24 @@ describe("analytics enablement", () => {
     expect(isBrowserAnalyticsEnabled()).toBe(false);
   });
 
+  it("returns the configured browser PostHog project token", () => {
+    process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN = "public-token";
+
+    expect(browserPostHogProjectToken()).toBe("public-token");
+  });
+
+  it("returns undefined when the browser PostHog project token is not set", () => {
+    delete process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN;
+
+    expect(browserPostHogProjectToken()).toBeUndefined();
+  });
+
+  it("returns the raw blank browser PostHog project token", () => {
+    process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN = "   ";
+
+    expect(browserPostHogProjectToken()).toBe("   ");
+  });
+
   it("defaults server analytics to enabled when PostHog is configured", () => {
     process.env.POSTHOG_PROJECT_API_KEY = "server-key";
 
@@ -55,5 +75,23 @@ describe("analytics enablement", () => {
     process.env.POSTHOG_PROJECT_API_KEY = "   ";
 
     expect(isServerAnalyticsEnabled()).toBe(false);
+  });
+
+  it("returns the configured server PostHog project API key", () => {
+    process.env.POSTHOG_PROJECT_API_KEY = "server-key";
+
+    expect(serverPostHogProjectApiKey()).toBe("server-key");
+  });
+
+  it("returns undefined when the server PostHog project API key is not set", () => {
+    delete process.env.POSTHOG_PROJECT_API_KEY;
+
+    expect(serverPostHogProjectApiKey()).toBeUndefined();
+  });
+
+  it("returns the raw blank server PostHog project API key", () => {
+    process.env.POSTHOG_PROJECT_API_KEY = "   ";
+
+    expect(serverPostHogProjectApiKey()).toBe("   ");
   });
 });
