@@ -48,6 +48,10 @@ _Avoid_: Delivery manifest
 A guest buyer who provides contact and pickup details for one order.
 _Avoid_: Account, user, member
 
+**Analytics Visitor**:
+An anonymous browser journey recognized by product analytics for funnel continuity.
+_Avoid_: Customer, account, user, member
+
 **Admin**:
 The single authenticated operator role for V1.
 _Avoid_: Staff roles, manager role
@@ -62,6 +66,7 @@ _Avoid_: Warehouse worker, fulfiller
 - An **Active Weekly Menu** is the only **Weekly Menu** customers can order from.
 - A **Product** on a **Weekly Menu** has one **Stock Limit**.
 - A **Checkout Reservation** belongs to one customer checkout attempt and expires if payment is abandoned.
+- A **Checkout Reservation** may include one **Analytics Visitor** for analytics continuity, but checkout must work without one.
 - An **Order** is created only after successful payment confirmation.
 - An **Order** belongs to exactly one **Pickup Slot**.
 - A **Pickup Slot** belongs to exactly one **Weekly Menu**.
@@ -83,4 +88,5 @@ _Avoid_: Warehouse worker, fulfiller
 - "Inventory" can imply warehouse stock. Use **Stock Limit** for the sellable quantity the bakery chooses for a weekly menu.
 - "Order" should mean a paid commitment. Use **Checkout Reservation** for temporary stock holds before payment succeeds.
 - "Account" conflicts with guest checkout. Use **Customer** for the buyer who provides contact details for a single order.
+- "Analytics visitor" should not imply an account or customer profile. It is only an anonymous analytics join key for product funnel analysis.
 - "Delivery" is out of scope for V1. Use **Pickup Slot** for the fixed handoff window.

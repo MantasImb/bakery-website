@@ -1,0 +1,135 @@
+/**
+ * @jest-environment node
+ */
+
+const mockPostHogClient = {
+  capture: jest.fn(),
+  shutdown: jest.fn(),
+};
+
+jest.mock("posthog-node", () => ({
+  PostHog: jest.fn().mockImplementation(() => mockPostHogClient),
+}));
+
+const originalProjectApiKey = process.env.POSTHOG_PROJECT_API_KEY;
+const originalPostHogHost = process.env.POSTHOG_HOST;
+
+function loadPostHogServerModule() {
+  const { PostHog } = jest.requireMock("posthog-node") as {
+    PostHog: jest.Mock;
+  };
+  const { captureServerPostHogEvent } = jest.requireActual(
+    "./posthog-server",
+  ) as typeof import("./posthog-server");
+
+  return { PostHog, captureServerPostHogEvent };
+}
+
+describe("captureServerPostHogEvent", () => {
+  afterEach(() => {
+    if (originalProjectApiKey === undefined) {
+      delete process.env.POSTHOG_PROJECT_API_KEY;
+    } else {
+      process.env.POSTHOG_PROJECT_API_KEY = originalProjectApiKey;
+    }
+
+    if (originalPostHogHost === undefined) {
+      delete process.env.POSTHOG_HOST;
+    } else {
+      process.env.POSTHOG_HOST = originalPostHogHost;
+    }
+
+    jest.clearAllMocks();
+    mockPostHogClient.capture.mockReset();
+    mockPostHogClient.shutdown.mockReset();
+    jest.restoreAllMocks();
+    jest.resetModules();
+  });
+
+  it("skips capture when server analytics is disabled", () => {
+    const { PostHog, captureServerPostHogEvent } = loadPostHogServerModule();
+    delete process.env.POSTHOG_PROJECT_API_KEY;
+
+    captureServerPostHogEvent({
+      eventName: "checkout_reservation_expired",
+      analyticsVisitorId: "visitor_123",
+      properties: { checkoutReservationId: "reservation_123" },
+    });
+
+    expect(PostHog).not.toHaveBeenCalled();
+  });
+
+  it("suppresses person profile creation for anonymous visitor events", () => {
+    const { PostHog, captureServerPostHogEvent } = loadPostHogServerModule();
+    process.env.POSTHOG_PROJECT_API_KEY = "server-key";
+    process.env.POSTHOG_HOST = "https://eu.posthog.com";
+
+    captureServerPostHogEvent({
+      eventName: "checkout_reservation_expired",
+      analyticsVisitorId: "visitor_123",
+      properties: { checkoutReservationId: "reservation_123" },
+    });
+
+    expect(PostHog).toHaveBeenCalledWith("server-key", {
+      host: "https://eu.posthog.com",
+      disableGeoip: true,
+    });
+    expect(mockPostHogClient.capture).toHaveBeenCalledWith({
+      distinctId: "visitor_123",
+      event: "checkout_reservation_expired",
+      properties: {
+        checkoutReservationId: "reservation_123",
+        $process_person_profile: false,
+      },
+    });
+  });
+
+  it("keeps safe scalar properties and removes disallowed properties", () => {
+    const { captureServerPostHogEvent } = loadPostHogServerModule();
+    process.env.POSTHOG_PROJECT_API_KEY = "server-key";
+
+    captureServerPostHogEvent({
+      eventName: "payment_succeeded",
+      analyticsVisitorId: "visitor_123",
+      properties: {
+        orderId: "order_123",
+        orderTotalMinor: 2500,
+        email: "customer@example.com",
+        rawRequestBody: "payload",
+        invalidCount: Number.NaN,
+      },
+    });
+
+    expect(mockPostHogClient.capture).toHaveBeenCalledWith({
+      distinctId: "visitor_123",
+      event: "payment_succeeded",
+      properties: {
+        orderId: "order_123",
+        orderTotalMinor: 2500,
+        $process_person_profile: false,
+      },
+    });
+  });
+
+  it("swallows server PostHog capture failures", () => {
+    const { captureServerPostHogEvent } = loadPostHogServerModule();
+    const consoleError = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    process.env.POSTHOG_PROJECT_API_KEY = "server-key";
+    mockPostHogClient.capture.mockImplementation(() => {
+      throw new Error("capture failed");
+    });
+
+    expect(() =>
+      captureServerPostHogEvent({
+        eventName: "payment_succeeded",
+        analyticsVisitorId: "visitor_123",
+      }),
+    ).not.toThrow();
+    expect(consoleError).toHaveBeenCalledWith(
+      "PostHog server analytics capture failed",
+      expect.any(Error),
+    );
+  });
+});

@@ -18,11 +18,11 @@ Keep Sentry behind `/lib/observability/`.
 - Code inside `/lib/observability/` may import `@sentry/nextjs` directly.
 - Application features should use the project-owned observability wrapper instead of importing Sentry directly.
 - Capability modules such as `modules/cart`, `modules/weekly-menu`, `modules/checkout`, `modules/orders`, and `modules/kitchen` should keep domain behavior provider-agnostic. Prefer returning typed results or throwing unexpected errors; route handlers, server actions, UI boundaries, or service orchestration code decide what gets reported.
-- PostHog should eventually live under `/lib/observability/` too, but it remains deferred until the analytics implementation step.
+- PostHog also lives under `/lib/observability/`. Keep PostHog SDK imports in provider-specific files there, and keep application code on project-owned analytics facades.
 
 The wrapper should stay small. It should provide a clear place for privacy filtering, context normalization, Sentry capture calls, and future provider-specific adapters. Do not turn it into a broad logging framework unless real feature work proves that need.
 
-The initial implementation may keep the public wrapper, sanitizer, and Sentry adapter in `/lib/observability/index.ts` while Sentry is the only provider. When PostHog or another observability provider is added, expect this folder to split into a project-owned public facade plus provider-specific files, for example `context.ts`, `sentry.ts`, and `analytics.ts`.
+Now that PostHog has been added, `/lib/observability/index.ts` should stay a small public facade. Provider-specific code belongs in files such as `sentry.ts`, `sentry-context.ts`, `posthog.ts`, and `posthog-server.ts`, while project-owned analytics contracts belong in `analytics.ts` and `analytics-server.ts`.
 
 ## Allowed Context
 

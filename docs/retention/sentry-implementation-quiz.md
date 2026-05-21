@@ -36,7 +36,7 @@ This quiz is based on the current Sentry guidance and implementation in this pro
 - [ ] C. So Sentry can automatically inspect private domain state
 - [ ] D. So tests can mock the Sentry SDK everywhere
 
-#### 6. Which future provider is explicitly mentioned as eventually belonging under `/lib/observability/`?
+#### 6. Which analytics provider also belongs under `/lib/observability/`?
 - [ ] A. Datadog
 - [ ] B. New Relic
 - [ ] C. PostHog
@@ -48,8 +48,8 @@ This quiz is based on the current Sentry guidance and implementation in this pro
 - [ ] C. A replacement for route handlers
 - [ ] D. A full analytics pipeline
 
-#### 8. When might `/lib/observability/index.ts` be split into multiple files?
-- [ ] A. When another observability provider such as PostHog is added
+#### 8. What should `/lib/observability/index.ts` be now that PostHog has been added?
+- [ ] A. A small public facade that re-exports project-owned observability APIs
 - [ ] B. Whenever a new Sentry context key is added
 - [ ] C. Only after every route has Sentry capture
 - [ ] D. Never, because the guidance forbids it
@@ -182,8 +182,8 @@ This quiz is based on the current Sentry guidance and implementation in this pro
 - [ ] C. `{}`
 - [ ] D. `{ observability: {} }`
 
-#### 30. Which safe context key would best describe the deployment label of a captured event?
-- [ ] A. `environment`
+#### 30. What should happen to query strings and fragments in safe Sentry `route` context?
+- [ ] A. They should be stripped so only the pathname is kept
 - [ ] B. `customerName`
 - [ ] C. `rawRequestBody`
 - [ ] D. `apiKey`
@@ -240,7 +240,7 @@ This quiz is based on the current Sentry guidance and implementation in this pro
 
 #### 39. Which module owns the `ObservabilityContext` type?
 - [ ] A. `next.config.ts`
-- [ ] B. `lib/observability/index.ts`
+- [ ] B. `lib/observability/sentry.ts`
 - [ ] C. `instrumentation.ts`
 - [ ] D. `app/layout.tsx`
 
@@ -578,7 +578,7 @@ This quiz is based on the current Sentry guidance and implementation in this pro
 
 #### 94. What does `lib/observability/index.test.ts` verify?
 - [ ] A. Sentry SDK internals
-- [ ] B. Sanitizer behavior for safe IDs/state, disallowed fields, and product quantities
+- [ ] B. The public facade keeps the Sentry context sanitizer available
 - [ ] C. Vercel deployment logs
 - [ ] D. Browser rendering behavior
 
@@ -680,16 +680,16 @@ This quiz is based on the current Sentry guidance and implementation in this pro
 - [ ] C. `SENTRY_DSN` and `SENTRY_AUTH_TOKEN`
 - [ ] D. `SENTRY_RELEASE` and `SENTRY_DEV_SMOKE_TOKEN`
 
-#### 111. What does the Sentry integration plan say about telemetry expansion?
+#### 111. What does the Sentry guidance say about telemetry expansion?
 - [ ] A. It is completed
-- [ ] B. It is not started
+- [ ] B. It remains deferred until production traffic expectations and feature workflows are clearer
 - [ ] C. It is forbidden forever
 - [ ] D. It should be enabled by default
 
-#### 112. Which phase is listed as partially completed in the Sentry integration plan?
+#### 112. Which implementation-sequence step is listed as done for Sentry?
 - [ ] A. Dependency and docs check
 - [ ] B. Observability wrapper
-- [ ] C. Validation
+- [ ] C. Sentry Error Monitoring
 - [ ] D. Developer smoke surface
 
 #### 113. Which validation item remains part of the integration plan?
