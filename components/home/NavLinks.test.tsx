@@ -12,7 +12,15 @@ describe("NavLinks", () => {
   });
 
   it("records navigation as secondary engagement through the analytics facade", () => {
-    render(<NavLinks />);
+    render(
+      <NavLinks
+        items={[
+          { id: "menu", label: "Menu" },
+          { id: "visit", label: "Visit" },
+          { id: "about", label: "About" },
+        ]}
+      />,
+    );
 
     fireEvent.click(screen.getByRole("link", { name: "Menu" }));
 
@@ -29,7 +37,7 @@ describe("OrderAheadButton", () => {
   });
 
   it("records order ahead as visit planning secondary engagement", () => {
-    render(<OrderAheadButton />);
+    render(<OrderAheadButton label="Order ahead" />);
 
     fireEvent.click(screen.getByRole("link", { name: /order ahead/i }));
 

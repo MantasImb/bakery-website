@@ -4,7 +4,7 @@ status: accepted
 
 # Use PostgreSQL And Prisma For V1 Persistence
 
-V1 uses PostgreSQL and Prisma for persistent data such as weekly menus, products, localized product content, stock limits, pickup slots, checkout reservations, orders, payment state, fulfillment state, and notification state. Persistence supports the domain model, but database schema and ORM behavior should not become the owner of business rules.
+V1 uses PostgreSQL and Prisma for persistent data such as weekly menus, weekly menu products, localized product content, stock limits, pickup slots, checkout reservations, orders, payment state, fulfillment state, and notification state. Persistence supports the domain model, but database schema and ORM behavior should not become the owner of business rules.
 
 ## Considered Options
 

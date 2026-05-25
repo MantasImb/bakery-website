@@ -1,4 +1,4 @@
-import { viewport } from "@/app/layout";
+import { viewport } from "@/app/viewport";
 
 describe("Root layout viewport", () => {
   it("publishes a light browser color scheme", () => {

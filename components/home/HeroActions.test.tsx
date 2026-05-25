@@ -16,15 +16,19 @@ describe("HeroActions", () => {
   });
 
   it("records the primary homepage CTA through the analytics facade", () => {
-    render(<HeroActions />);
+    render(
+      <HeroActions planVisitLabel="Plan a visit" viewMenuLabel="View menu" />,
+    );
 
-    fireEvent.click(screen.getByRole("link", { name: /view today's menu/i }));
+    fireEvent.click(screen.getByRole("link", { name: /view menu/i }));
 
     expect(recordHomepageCtaClicked).toHaveBeenCalledWith("view_menu");
   });
 
   it("records visit planning as secondary engagement", () => {
-    render(<HeroActions />);
+    render(
+      <HeroActions planVisitLabel="Plan a visit" viewMenuLabel="View menu" />,
+    );
 
     fireEvent.click(screen.getByRole("link", { name: /plan a visit/i }));
 

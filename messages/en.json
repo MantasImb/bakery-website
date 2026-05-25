@@ -1,0 +1,46 @@
+{
+  "HomePage": {
+    "brand": "Hearth & Flour",
+    "navigation": {
+      "menu": "Menu",
+      "visit": "Visit",
+      "about": "About"
+    },
+    "actions": {
+      "orderAhead": "Order ahead",
+      "viewMenu": "View weekly menu",
+      "planVisit": "Plan a pickup"
+    },
+    "hero": {
+      "eyebrow": "Neighborhood bakery",
+      "title": "Fresh bread and quiet morning pastries.",
+      "description": "Hearth & Flour bakes slow-fermented loaves, seasonal pastries, and simple coffee for neighborhood pickup."
+    },
+    "details": {
+      "eyebrow": "Good to know",
+      "title": "A small weekly menu, ready for preorder.",
+      "menu": {
+        "label": "Weekly bake",
+        "value": "Country sourdough, seeded rye, morning buns, and a few seasonal pastries."
+      },
+      "visit": {
+        "label": "Pickup window",
+        "value": "Order ahead and collect your bake during the fixed pickup window."
+      },
+      "about": {
+        "label": "Bakery note",
+        "value": "Everything is mixed in small batches and shaped for the neighborhood table."
+      }
+    },
+    "mediaAlt": "Bakery counter preview",
+    "language": {
+      "label": "Language",
+      "norwegian": "Norsk",
+      "english": "English"
+    },
+    "metadata": {
+      "title": "Hearth & Flour | Weekly bakery preorders",
+      "description": "Preorder this week's bread and pastries from Hearth & Flour for neighborhood pickup."
+    }
+  }
+}

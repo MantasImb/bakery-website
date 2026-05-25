@@ -5,6 +5,8 @@ Related durable docs:
 - Domain language: [`../CONTEXT.md`](../CONTEXT.md)
 - Architectural decisions: [`adr/`](./adr/)
 - Implementation sequence: [`implementation-sequence.md`](./implementation-sequence.md)
+- Internationalization guidance: [`i18n.md`](./i18n.md)
+- SEO guidance: [`seo.md`](./seo.md)
 
 ## Problem Statement
 
@@ -51,10 +53,13 @@ V1 should prioritize a clear purchase flow for middle-aged or older customers an
 
 - V1 is a weekly preorder/drop model, not a permanent evergreen catalog.
 - Each weekly menu contains a small number of products, typically 3-5.
+- Admins can reuse previous product information by copying a product from an earlier weekly menu into a new weekly menu.
+- A copied product becomes an independently editable product for the new weekly menu and does not mutate the previous product.
 - The homepage hero is driven by the active weekly menu and shows the current offer image, overlay text, quote, and CTA.
 - Below the homepage hero, the site explains the preorder model, pickup location, pickup timing, and key customer instructions.
 - Product browsing should be simple and direct, with clear add-to-cart controls and minimal decision complexity.
 - Product visual design can be refined later, but usability for middle-aged or older customers and families is a V1 requirement.
+- Customer-facing Norwegian and English copy should be clear, warm, and direct, especially for checkout, pickup, allergy/allergen, dietary, payment, cancellation/refund, and error messaging.
 - Products have limited stock. Unlimited preorder is not allowed.
 - Admin can change product stock limits and manually close individual products or the full weekly menu.
 - Checkout must prevent overselling, including concurrent checkout attempts.
@@ -69,7 +74,7 @@ V1 should prioritize a clear purchase flow for middle-aged or older customers an
 - If orders already exist for a pickup slot, editing or deleting that slot must be handled explicitly.
 - Admin access uses one authenticated admin role in V1.
 - PostgreSQL and Prisma are the selected database stack for V1.
-- Core persisted data includes weekly menus, products, localized product content, product images, stock limits, pickup slots, carts or checkout reservations, orders, order line items, customer contact details, payment state, fulfillment state, and notification state.
+- Core persisted data includes weekly menus, weekly menu products, localized product content, product images, stock limits, pickup slots, carts or checkout reservations, orders, order line items, customer contact details, payment state, fulfillment state, and notification state.
 - Order states should support at least pending payment, paid, preparing, packed, ready for pickup, picked up, cancelled, and refunded.
 - Stock should only be permanently consumed by paid orders. Temporary checkout reservations must expire if payment is abandoned.
 - Stripe webhooks are the source of truth for successful payment confirmation.
@@ -77,6 +82,7 @@ V1 should prioritize a clear purchase flow for middle-aged or older customers an
 - SMS pickup reminders are future scope.
 - English and Norwegian are required languages.
 - Product names, descriptions, UI text, transactional email content, and key customer instructions must be localizable.
+- Customer transactional emails use the customer locale captured from the checkout or order route.
 - Sentry should capture frontend and server errors.
 - PostHog should track key funnel events such as homepage CTA click, product add, cart view, checkout started, payment success, and checkout abandonment.
 - Admin/kitchen views must include production totals, packing lists, pickup-slot checklists, customer contact details, and status updates.

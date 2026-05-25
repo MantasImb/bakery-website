@@ -12,6 +12,9 @@ const config: Config = {
   },
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
   testEnvironment: "jsdom",
+  transformIgnorePatterns: [
+    "/node_modules/(?!next-intl|use-intl|@formatjs).+\\.(js|jsx|mjs|cjs|ts|tsx)$",
+  ],
 };
 
 export default createJestConfig(config);
