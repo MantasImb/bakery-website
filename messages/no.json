@@ -3,44 +3,44 @@
     "brand": "Hearth & Flour",
     "navigation": {
       "menu": "Meny",
-      "visit": "Besok",
+      "visit": "Besøk",
       "about": "Om oss"
     },
     "actions": {
-      "orderAhead": "Forhandsbestill",
+      "orderAhead": "Forhåndsbestill",
       "viewMenu": "Se ukens meny",
       "planVisit": "Planlegg henting"
     },
     "hero": {
       "eyebrow": "Nabolagsbakeri",
-      "title": "Ferskt brod og rolige morgenbakverk.",
-      "description": "Hearth & Flour baker langtidshevede brod, sesongbakst og enkel kaffe for henting i nabolaget."
+      "title": "Ferskt brød og rolige morgenbakverk.",
+      "description": "Hearth & Flour baker langtidshevede brød, sesongbakst og enkel kaffe for henting i nabolaget."
     },
     "details": {
-      "eyebrow": "Godt a vite",
-      "title": "En liten ukentlig meny, klar for forhandsbestilling.",
+      "eyebrow": "Godt å vite",
+      "title": "En liten ukentlig meny, klar for forhåndsbestilling.",
       "menu": {
         "label": "Ukens bakst",
-        "value": "Surdeigsbrod, rugbrod med fro, morgenboller og noen fa sesongbakverk."
+        "value": "Surdeigsbrød, rugbrød med frø, morgenboller og noen få sesongbakverk."
       },
       "visit": {
         "label": "Hentevindu",
-        "value": "Bestill pa forhand og hent baksten i det faste hentevinduet."
+        "value": "Bestill på forhånd og hent baksten i det faste hentevinduet."
       },
       "about": {
         "label": "Bakerinotat",
-        "value": "Alt blandes i sma porsjoner og formes for nabolagets bord."
+        "value": "Alt blandes i små porsjoner og formes for nabolagets bord."
       }
     },
-    "mediaAlt": "Forhandsvisning av bakeridisk",
+    "mediaAlt": "Forhåndsvisning av bakeridisk",
     "language": {
-      "label": "Sprak",
+      "label": "Språk",
       "norwegian": "Norsk",
       "english": "English"
     },
     "metadata": {
-      "title": "Hearth & Flour | Ukentlig bakeriforhandsbestilling",
-      "description": "Forhandsbestill ukens brod og bakverk fra Hearth & Flour for henting i nabolaget."
+      "title": "Hearth & Flour | Ukentlig bakeriforhåndsbestilling",
+      "description": "Forhåndsbestill ukens brød og bakverk fra Hearth & Flour for henting i nabolaget."
     }
   }
 }

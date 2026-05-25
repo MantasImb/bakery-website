@@ -16,7 +16,7 @@ describe("Home page", () => {
     expect(
       screen.getByRole("heading", {
         level: 1,
-        name: "Ferskt brod og rolige morgenbakverk.",
+        name: "Ferskt brød og rolige morgenbakverk.",
       }),
     ).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Se ukens meny" })).toHaveAttribute(
