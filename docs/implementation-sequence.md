@@ -249,11 +249,19 @@ Actionable outcomes:
 
 - [ ] Allow an admin to create, edit, publish, close, and archive a weekly menu.
 - [ ] Allow an admin to copy a product from a previous weekly menu into a new weekly menu as an independently editable product.
+- [ ] Group reusable product sources by previous weekly menu in the admin selection UI.
+- [ ] Reuse individual products only; do not duplicate entire previous weekly menus in V1.
 - [ ] Ensure edits to a copied product do not rewrite the previous product it was copied from.
+- [ ] Copy only product information intrinsic to the baked item, such as localized copy, duplicated image, fixed-list allergens, and structured dietary flags.
+- [ ] Require external weekly settings such as price, stock limits, pickup slots, and ordering availability to be set fresh before the copied product can be published.
+- [ ] Keep product reuse sourced from previous weekly menus, not incomplete drafts. If draft products or draft weekly menus are introduced later, store them separately and allow them to be incomplete.
 - [ ] Support 3-5 products per weekly menu.
-- [ ] Store product name, description, price, image, allergen/dietary notes, and localized copy.
+- [ ] Store product name, description, price, image, fixed-list allergens, structured dietary flags, and localized copy.
 - [ ] Prevent publishing a weekly menu unless each product has localized product content for both supported customer languages.
 - [ ] Store stock limits and sold-out/closed state.
+- [ ] Model ordering availability at both weekly-menu and product levels.
+- [ ] Treat published weekly menu product fields as immutable; handle operational close/sold-out state separately.
+- [ ] Render the homepage hero with an image representing the whole active weekly menu, not a single featured product.
 - [ ] Render the active weekly menu on the public homepage and product selection flow.
 
 ## 8. Cart and Stock Validation
