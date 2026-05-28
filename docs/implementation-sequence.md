@@ -5,6 +5,8 @@ Related durable docs:
 - Domain language: [`../CONTEXT.md`](../CONTEXT.md)
 - Product scope: [`prd.md`](./prd.md)
 - Architectural decisions: [`adr/`](./adr/)
+- Internationalization guidance: [`i18n.md`](./i18n.md)
+- SEO guidance: [`seo.md`](./seo.md)
 
 This sequence is the recommended order for turning the product PRD into working software. It is not a permanent project plan; update it as implementation teaches us more.
 
@@ -29,7 +31,7 @@ Last reviewed: 2026-05-18
 | 4. Analytics Wrapper and Event Plan | Done | `posthog-js`, `posthog-node`, `/lib/observability/analytics.ts`, `/lib/observability/analytics-server.ts`, `/lib/observability/posthog.ts`, `/lib/observability/posthog-server.ts`, typed helper tests, homepage analytics tests, and `docs/posthog.md` are in place. Deeper flow instrumentation remains deferred to step 12. |
 | 5. Internationalization Skeleton | Not started | No locale routes or dictionary structure are present. |
 | 6. Database and Prisma Foundation | Not started | No Prisma dependency, schema, migration, or database configuration is present. |
-| 7. Weekly Menu and Product Catalog | Not started | No weekly menu or product catalog domain, persistence, admin UI, or public menu rendering exists yet. |
+| 7. Weekly Menu and Product Reuse | Not started | No weekly menu product reuse, persistence, admin UI, or public menu rendering exists yet. |
 | 8. Cart and Stock Validation | Not started | No cart, stock validation, or checkout reservation behavior exists yet. |
 | 9. Stripe Checkout and Order Finalization | Not started | No Stripe dependency, checkout session creation, webhook handling, or order finalization exists yet. |
 | 10. Orders and Admin Kitchen Workflow | Not started | No admin area, order workflow, production totals, or packing lists exist yet. |
@@ -124,16 +126,101 @@ Completion plan:
 
 Status: Not started
 
-Set up the English/Norwegian route and dictionary structure before too much UI is built.
+Set up the Norwegian/English route and dictionary structure before too much UI is built.
 
 Localization can be added incrementally, but routing and copy structure become tedious to retrofit after many pages and components exist. This step should create the path for localized UI and product content without requiring final translations for every future screen.
 
+Resolved routing direction:
+
+- Use explicit locale prefixes for every supported customer-facing route: `/no` and `/en`.
+- Put localized customer pages under the locale segment, such as `app/[locale]/(customer)/...`, while keeping admin and API routes outside that tree.
+- Keep supported locales, default locale, and narrow route helpers in one small i18n/routing module used by `next-intl`, proxy, metadata, the language switcher, and tests.
+- Keep customer route segments stable and English after the locale prefix, such as `/no/menu` and `/en/menu`; translate visible labels and page content, not route slugs, for V1.
+- Keep API routes unlocalized; pass structured locale values only where a business flow needs them, such as checkout or order creation.
+- Add a customer-facing language switcher that preserves the current stable path and swaps only the locale prefix; treat the URL as the source of truth for customer locale.
+- Preserve the current locale across cart, checkout, payment return, and order confirmation routes unless the customer explicitly switches language.
+- Keep cart and checkout locale-prefixed for customer clarity while marking them non-indexable when metadata is implemented.
+- Keep order confirmation locale-prefixed for language continuity while marking it non-indexable because it is customer-specific.
+- Treat Norwegian Bokmål as the default locale and redirect unprefixed requests such as `/` to `/no`.
+- Keep the root redirect deterministic for V1; do not use browser-language negotiation to send English-preferring visitors to `/en`.
+- Treat `no` as the Norwegian Bokmål locale for V1; do not introduce separate `nb` or `nn` handling unless product scope changes.
+- Keep admin and kitchen screens out of V1 localization scope; use English UI copy for those operator surfaces.
+- Capture the customer locale from the checkout/order route so customer transactional emails use the same language as the ordering flow.
+- Keep cart data locale-neutral; only checkout/order state needs to capture customer locale for later communication.
+- Keep order customer locale fixed after order creation for transactional communication, even if a customer later opens an order route in another locale.
+- Resend customer emails in the original order locale only for V1; do not add manual resend-language selection unless support workflows prove it is needed.
+- Defer full translated email templates until notification workflows exist; Step 5 only prepares locale capture and message structure.
+- Pass the customer locale to Stripe Checkout where supported, using a minimal project-locale to Stripe-locale mapping and locale-prefixed success/cancel return URLs.
+- Use `next-intl` for localized routing, UI messages, locale-aware navigation, and future validation or transactional message copy.
+- Keep `next-intl` usage direct where practical so localization does not gain a separate project-specific abstraction layer before repeated product code needs one.
+- Keep localized UI messages separate from persisted localized product content.
+- Require customer-facing `next-intl` message keys to exist in both supported locales; missing UI translations should fail tests or build checks instead of falling back at runtime.
+- Separate surface-specific messages from reusable phrases: page or workflow copy belongs under the owning surface, while exact phrases reused across customer-facing surfaces may live in a shared namespace.
+- Localize customer-facing labels, helper text, validation messages, empty states, loading states, not-found UI, and recoverable errors under the locale route segment; keep technical logs, admin errors, and operator diagnostics English-only for V1.
+- Keep root or global error fallback UI minimal and Norwegian/default when the active locale is unavailable.
+- Do not translate user-provided checkout data such as names, email addresses, phone numbers, or notes; store it as provided or normalized structurally.
+- Show short localized generic messages for unexpected customer-facing failures and send technical detail to Sentry under the existing observability rules.
+- Include the safe `locale` value in customer-facing Sentry context when available, without sending translated messages, request bodies, customer contact fields, or full provider payloads.
+- Localize customer-facing metadata and include practical alternate links for `/no` and `/en`; keep SEO metadata centralized enough to extend later without rewriting every page.
+- Use self-canonical localized URLs and `hreflang` alternates for `no`, `en`, and `x-default`; point `x-default` directly to `/no`.
+- Keep indexability consistent across matching localized customer pages; reserve noindex for non-customer, operational, or transient routes.
+- Add a safe `locale` property to customer-facing analytics events while keeping event names stable English identifiers.
+- Use the active customer locale for money, date, time, and number display; keep NOK as the only V1 currency and persist money, dates, and pickup windows as structured values rather than localized strings.
+- Use explicit localized pickup labels instead of ambiguous numeric-only dates in customer-facing copy.
+- Keep product images locale-neutral and avoid language-specific text inside images.
+- Defer localized product slugs; if product detail pages are added later, start with stable product IDs or stable non-localized slugs unless SEO needs justify more.
+- Ensure admin product editing exposes both required customer-language content sets in one workflow, with layout flexible enough to stay visually usable.
+- Use consistent localized labels or a controlled vocabulary for allergen/dietary notes when product content is implemented; product descriptions can stay free-form.
+- Show customer locale as small operational metadata in admin order detail views when email or support behavior depends on it.
+- Require product-facing content in both supported customer languages before a weekly menu can be published; do not silently fall back between Norwegian and English product content.
+
 Actionable outcomes:
 
-- [ ] Establish supported locales and default locale.
-- [ ] Add the route/layout pattern for localized pages.
-- [ ] Add dictionaries or another translation mechanism for user-facing UI copy.
-- [ ] Confirm product content can eventually be stored and rendered per locale.
+- [ ] Establish supported locales and default locale: Norwegian Bokmål (`/no`) and English (`/en`), defaulting to Norwegian Bokmål.
+- [ ] Install and wire `next-intl`; do not build temporary hand-rolled dictionaries first.
+- [ ] Add a small i18n/routing module for supported locale constants and narrow route helpers.
+- [ ] Define a shared `Locale` type from supported locale constants and reuse it for route params, message loading, checkout/order locale capture, analytics, and Sentry context where appropriate.
+- [ ] Add the `next-intl` route/layout pattern for localized customer pages under the locale segment.
+- [ ] Validate locale at route/request boundaries and when persisting checkout or order locale; keep unrelated domain behavior locale-agnostic.
+- [ ] Migrate the current homepage into the localized customer route as the Step 5 vertical slice; the current homepage is a template and may be reshaped as needed for the i18n setup.
+- [ ] Use clean placeholder-quality localized homepage copy for proving the i18n system and tone; defer final sales/product copy until weekly menu content exists.
+- [ ] Implement deterministic root redirect from `/` to `/no`.
+- [ ] Return not-found for unsupported locale prefixes such as `/fr/menu`; redirect only truly unprefixed customer routes to `/no`.
+- [ ] Exclude framework internals, static assets, images, `/favicon.ico`, PostHog `/ingest` paths, API routes, and admin routes from locale redirect handling.
+- [ ] Use `next-intl` navigation helpers directly at first; defer a local localized `Link` wrapper until repeated usage proves it useful.
+- [ ] Add a language switcher for customer-facing pages using clear language names such as `Norsk` and `English`.
+- [ ] Keep the language switcher available but unobtrusive during checkout, preserving cart and entered data where technically feasible.
+- [ ] Ensure customer flow links and payment return URLs preserve the active locale.
+- [ ] Keep the future Stripe Checkout locale mapping small and provider-specific to checkout integration code.
+- [ ] Add `next-intl` messages for user-facing UI copy.
+- [ ] Store initial message files at `messages/no.json` and `messages/en.json`.
+- [ ] Add coverage checks that fail when customer-facing message keys are missing in either supported locale.
+- [ ] Defer generated message-key types until message-key mistakes become a recurring source of defects.
+- [ ] Organize messages so page/workflow copy and genuinely reused phrases can evolve separately.
+- [ ] Use shallow nested JSON message files by surface or shared namespace rather than one large flat message file.
+- [ ] Keep customer-facing copy clear, warm, and direct, especially for checkout, pickup, allergy/allergen, dietary, payment, cancellation/refund, and error messaging.
+- [ ] Include customer-facing validation, empty-state, loading, not-found, and recoverable-error messages in localized message coverage.
+- [ ] Add representative customer route smoke tests that assert high-value visible strings in both supported locales, while keeping component/domain behavior tests focused on behavior rather than every exact translation.
+- [ ] Confirm customer-facing error boundaries or route orchestration can attach safe locale context to Sentry events.
+- [ ] Add a lightweight localized metadata pattern for customer-facing pages, including alternate locale URLs.
+- [ ] Ensure localized metadata uses self-canonical URLs and `x-default` points to `/no`.
+- [ ] Include both localized canonical customer URLs in sitemap generation when sitemap support is added; do not include unprefixed customer URLs.
+- [ ] Include customer locale in customer-facing analytics event properties without translating event names.
+- [ ] Add locale-aware formatting helpers or direct `next-intl` formatting usage for customer-facing money, dates, times, and numbers without storing localized strings.
+- [ ] Confirm product content can eventually be stored and rendered per locale, with both supported customer languages required for weekly menu publication.
+- [ ] Confirm checkout/order persistence can store the customer locale used for later transactional email copy.
+
+Implementation shape:
+
+- Add the `next-intl` dependency and follow the current `next-intl` and local Next.js App Router docs for the exact setup files.
+- Create initial `messages/no.json` and `messages/en.json` files with shallow nested keys.
+- Create a small i18n/routing module for supported locale constants, default locale, the shared `Locale` type, and narrow route helpers.
+- Add the `next-intl` request/routing setup and locale redirect handling for customer pages only.
+- Move the current homepage into the localized customer route tree, for example under `app/[locale]/(customer)/`.
+- Keep admin routes, API routes, framework internals, static assets, `/favicon.ico`, and PostHog `/ingest` paths outside locale redirect handling.
+- Add a customer language switcher using `Norsk` and `English`.
+- Add localized metadata for the homepage with self-canonical URLs, `hreflang` alternates, and `x-default` pointing to `/no`.
+- Add tests for message-key parity, `/` redirecting to `/no`, `/no` and `/en` rendering high-value localized homepage copy, unsupported locale prefixes returning not-found, and language-switcher links preserving the stable path.
 
 ## 6. Database and Prisma Foundation
 
@@ -141,28 +228,31 @@ Status: Not started
 
 Add PostgreSQL and Prisma when the first persistent feature is ready.
 
-The weekly menu and product catalog need durable storage, but database work should follow the module skeleton so persistence does not become the domain model. Prisma should provide schema, migrations, and relational access while business rules remain testable outside the database where possible.
+The weekly menu and products need durable storage, but database work should follow the module skeleton so persistence does not become the domain model. Prisma should provide schema, migrations, and relational access while business rules remain testable outside the database where possible.
 
 Actionable outcomes:
 
 - [ ] Add Prisma and initial PostgreSQL configuration.
-- [ ] Define initial models for weekly menus, products, localized product content, pickup slots, and stock limits.
+- [ ] Define initial models for weekly menus, weekly menu products, localized product content, pickup slots, and stock limits.
 - [ ] Add migration workflow documentation.
 - [ ] Add tests around domain behavior separately from ORM implementation details.
 
-## 7. Weekly Menu and Product Catalog
+## 7. Weekly Menu and Product Reuse
 
 Status: Not started
 
 Build the core source of truth for the business: the active weekly menu.
 
-This comes before cart and checkout because customers can only order what the baker has published. The weekly menu defines the homepage offer, product list, ordering availability, pickup slots, and stock limits that every later flow depends on.
+This comes before cart and checkout because customers can only order what the baker has published. The weekly menu defines the homepage offer, product list, ordering availability, pickup slots, and stock limits that every later flow depends on. Reusing products from previous weekly menus should reduce admin setup work without becoming a customer-facing evergreen catalog or a separate template library.
 
 Actionable outcomes:
 
 - [ ] Allow an admin to create, edit, publish, close, and archive a weekly menu.
+- [ ] Allow an admin to copy a product from a previous weekly menu into a new weekly menu as an independently editable product.
+- [ ] Ensure edits to a copied product do not rewrite the previous product it was copied from.
 - [ ] Support 3-5 products per weekly menu.
 - [ ] Store product name, description, price, image, allergen/dietary notes, and localized copy.
+- [ ] Prevent publishing a weekly menu unless each product has localized product content for both supported customer languages.
 - [ ] Store stock limits and sold-out/closed state.
 - [ ] Render the active weekly menu on the public homepage and product selection flow.
 

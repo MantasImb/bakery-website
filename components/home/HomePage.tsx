@@ -1,25 +1,60 @@
-import { NavLinks, OrderAheadButton } from "@/components/home/NavLinks";
 import { HeroActions } from "@/components/home/HeroActions";
+import { LanguageSwitcher } from "@/components/home/LanguageSwitcher";
+import { NavLinks, NavigationItem, OrderAheadButton } from "@/components/home/NavLinks";
+import { Locale } from "@/i18n/routing";
 
-const dailyDetails = [
-  {
-    id: "menu",
-    label: "Daily bake",
-    value: "Country sourdough, seeded rye, morning buns, and a small pastry case.",
-  },
-  {
-    id: "visit",
-    label: "Pickup window",
-    value: "Open from 7:00 with bread held for same-day pickup until noon.",
-  },
-  {
-    id: "about",
-    label: "Bakery note",
-    value: "Everything is mixed in small batches and shaped for the neighborhood table.",
-  },
-];
+export type HomePageMessages = {
+  brand: string;
+  navigation: Record<NavigationItem["id"], string>;
+  actions: {
+    orderAhead: string;
+    viewMenu: string;
+    planVisit: string;
+  };
+  hero: {
+    eyebrow: string;
+    title: string;
+    description: string;
+  };
+  details: {
+    eyebrow: string;
+    title: string;
+    menu: {
+      label: string;
+      value: string;
+    };
+    visit: {
+      label: string;
+      value: string;
+    };
+    about: {
+      label: string;
+      value: string;
+    };
+  };
+  mediaAlt: string;
+  language: {
+    norwegian: string;
+    english: string;
+  };
+};
 
-export default function Home() {
+const detailIds = ["menu", "visit", "about"] as const;
+
+export function HomePage({
+  currentPath,
+  locale,
+  messages,
+}: {
+  currentPath: string;
+  locale: Locale;
+  messages: HomePageMessages;
+}) {
+  const navigationItems = detailIds.map((id) => ({
+    id,
+    label: messages.navigation[id],
+  }));
+
   return (
     <main className="min-h-svh bg-background text-foreground">
       <header className="border-b border-border bg-background">
@@ -31,12 +66,22 @@ export default function Home() {
             href="#home"
             className="text-sm font-semibold tracking-normal text-foreground"
           >
-            Hearth & Flour
+            {messages.brand}
           </a>
 
-          <NavLinks />
+          <NavLinks items={navigationItems} />
 
-          <OrderAheadButton />
+          <div className="flex items-center gap-4">
+            <LanguageSwitcher
+              currentLocale={locale}
+              currentPath={currentPath}
+              labels={{
+                no: messages.language.norwegian,
+                en: messages.language.english,
+              }}
+            />
+            <OrderAheadButton label={messages.actions.orderAhead} />
+          </div>
         </nav>
       </header>
 
@@ -46,22 +91,24 @@ export default function Home() {
       >
         <div className="max-w-3xl">
           <p className="text-sm font-medium uppercase tracking-normal text-muted-foreground">
-            Neighborhood bakery
+            {messages.hero.eyebrow}
           </p>
           <h1 className="mt-5 max-w-3xl text-5xl font-semibold leading-[1.02] tracking-normal text-foreground sm:text-6xl lg:text-7xl">
-            Fresh bread and quiet morning pastries.
+            {messages.hero.title}
           </h1>
           <p className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
-            Hearth & Flour bakes slow-fermented loaves, seasonal pastries, and
-            simple coffee for daily pickup in the neighborhood.
+            {messages.hero.description}
           </p>
 
-          <HeroActions />
+          <HeroActions
+            planVisitLabel={messages.actions.planVisit}
+            viewMenuLabel={messages.actions.viewMenu}
+          />
         </div>
 
         <div
           role="img"
-          aria-label="Bakery counter preview"
+          aria-label={messages.mediaAlt}
           className="grid min-h-80 grid-cols-6 grid-rows-6 gap-3 rounded-lg border border-border bg-surface p-3 shadow-sm sm:min-h-96"
         >
           <div className="col-span-4 row-span-3 rounded-md bg-muted" />
@@ -80,28 +127,28 @@ export default function Home() {
         <div className="mx-auto grid max-w-6xl gap-8 px-5 py-12 sm:px-8 lg:grid-cols-[0.78fr_1.22fr] lg:items-start lg:py-14">
           <div>
             <p className="text-sm font-medium uppercase tracking-normal text-muted-foreground">
-              Good to know
+              {messages.details.eyebrow}
             </p>
             <h2
               id="daily-details-heading"
               className="mt-3 max-w-md text-3xl font-semibold leading-tight tracking-normal text-foreground sm:text-4xl"
             >
-              A small daily bake, ready for regular mornings.
+              {messages.details.title}
             </h2>
           </div>
 
           <dl className="grid gap-4 sm:grid-cols-3">
-            {dailyDetails.map((detail) => (
+            {detailIds.map((id) => (
               <div
-                key={detail.id}
-                id={detail.id}
+                key={id}
+                id={id}
                 className="border-t border-border pt-4"
               >
                 <dt className="text-sm font-semibold text-foreground">
-                  {detail.label}
+                  {messages.details[id].label}
                 </dt>
                 <dd className="mt-3 text-sm leading-6 text-muted-foreground">
-                  {detail.value}
+                  {messages.details[id].value}
                 </dd>
               </div>
             ))}

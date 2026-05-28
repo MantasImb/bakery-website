@@ -6,7 +6,13 @@ import {
   recordSecondaryEngagement,
 } from "@/lib/observability/analytics";
 
-export function HeroActions() {
+export function HeroActions({
+  planVisitLabel,
+  viewMenuLabel,
+}: {
+  planVisitLabel: string;
+  viewMenuLabel: string;
+}) {
   return (
     <div className="mt-8 flex flex-col gap-3 sm:flex-row">
       <Button asChild size="lg">
@@ -14,7 +20,7 @@ export function HeroActions() {
           href="#menu"
           onClick={() => recordHomepageCtaClicked("view_menu")}
         >
-          View today&apos;s menu
+          {viewMenuLabel}
         </a>
       </Button>
       <Button asChild variant="outline" size="lg">
@@ -26,7 +32,7 @@ export function HeroActions() {
             })
           }
         >
-          Plan a visit
+          {planVisitLabel}
         </a>
       </Button>
     </div>

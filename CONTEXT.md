@@ -16,6 +16,10 @@ _Avoid_: Current catalog, live inventory
 A baked item offered through a weekly menu.
 _Avoid_: SKU, item, listing
 
+**Localized Product Content**:
+Customer-facing product name, description, and notes written for one supported language.
+_Avoid_: Translation fallback, copy variant
+
 **Stock Limit**:
 The maximum quantity of a product the bakery is willing to sell for a weekly menu.
 _Avoid_: Inventory, warehouse stock
@@ -64,6 +68,10 @@ _Avoid_: Warehouse worker, fulfiller
 
 - A **Weekly Menu** contains 3-5 **Products**.
 - An **Active Weekly Menu** is the only **Weekly Menu** customers can order from.
+- An **Admin** can copy a **Product** from a previous **Weekly Menu** into a new **Weekly Menu** as an independently editable **Product**.
+- Updating a copied **Product** does not change the previous **Product** it was copied from.
+- A **Product** must have **Localized Product Content** in every supported customer language before its **Weekly Menu** can be published.
+- A **Product** image is shared across customer languages and should not contain language-specific text.
 - A **Product** on a **Weekly Menu** has one **Stock Limit**.
 - A **Checkout Reservation** belongs to one customer checkout attempt and expires if payment is abandoned.
 - A **Checkout Reservation** may include one **Analytics Visitor** for analytics continuity, but checkout must work without one.
@@ -85,6 +93,7 @@ _Avoid_: Warehouse worker, fulfiller
 ## Flagged Ambiguities
 
 - "Catalog" can imply a permanent evergreen ecommerce catalog. Use **Weekly Menu** because V1 is a preorder/drop model.
+- Reusing a previous **Product** as a starting point is an admin creation aid, not a customer-facing catalog. Customers order **Products** from the **Active Weekly Menu**.
 - "Inventory" can imply warehouse stock. Use **Stock Limit** for the sellable quantity the bakery chooses for a weekly menu.
 - "Order" should mean a paid commitment. Use **Checkout Reservation** for temporary stock holds before payment succeeds.
 - "Account" conflicts with guest checkout. Use **Customer** for the buyer who provides contact details for a single order.

@@ -1,10 +1,13 @@
 import type { NextConfig } from "next";
 import { PHASE_PRODUCTION_BUILD } from "next/constants";
 import { withSentryConfig } from "@sentry/nextjs";
+import createNextIntlPlugin from "next-intl/plugin";
 import {
   resolveSentryServerRelease,
   sentryReleaseOption,
 } from "./lib/observability/sentry-release";
+
+const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
   async rewrites() {
@@ -56,7 +59,7 @@ function createNextConfig(phase: string) {
 
   const sentryRelease = resolveSentryServerRelease();
 
-  return withSentryConfig(nextConfig, {
+  return withSentryConfig(withNextIntl(nextConfig), {
     org: process.env.SENTRY_ORG,
     project: process.env.SENTRY_PROJECT,
     authToken: process.env.SENTRY_AUTH_TOKEN,
