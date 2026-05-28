@@ -24,6 +24,18 @@ _Avoid_: Translation fallback, copy variant
 The maximum quantity of a product the bakery is willing to sell for a weekly menu.
 _Avoid_: Inventory, warehouse stock
 
+**Ordering Availability**:
+Whether customers can currently place orders for a weekly menu or product.
+_Avoid_: Visibility, inventory status
+
+**Allergen**:
+A fixed-list food allergen associated with a product.
+_Avoid_: Free-text allergy note
+
+**Dietary Flag**:
+A structured dietary attribute associated with a product.
+_Avoid_: Marketing label, free-text diet note
+
 **Checkout Reservation**:
 A temporary hold on stock while a customer attempts payment.
 _Avoid_: Order, purchase, permanent stock consumption
@@ -73,6 +85,15 @@ _Avoid_: Warehouse worker, fulfiller
 - A **Product** must have **Localized Product Content** in every supported customer language before its **Weekly Menu** can be published.
 - A **Product** image is shared across customer languages and should not contain language-specific text.
 - A **Product** on a **Weekly Menu** has one **Stock Limit**.
+- A **Weekly Menu** has **Ordering Availability** for the full preorder cycle.
+- A **Product** has **Ordering Availability** for product-level sold-out or manual close behavior.
+- A **Product** uses fixed-list **Allergens** and structured **Dietary Flags**.
+- Copying a **Product** from a previous **Weekly Menu** copies only product information intrinsic to the baked item, including its image, **Allergens**, and **Dietary Flags**.
+- Copying a **Product** from a previous **Weekly Menu** does not copy external weekly settings such as price, **Stock Limit**, pickup slots, or ordering availability.
+- Product reuse comes from previous weekly menus, not incomplete drafts.
+- A published **Weekly Menu** cannot have its product fields edited.
+- A **Product** image is duplicated when a **Product** is copied into a new **Weekly Menu** so replacing the new image does not change the previous menu.
+- A **Pickup Slot** does not have its own capacity limit in V1.
 - A **Checkout Reservation** belongs to one customer checkout attempt and expires if payment is abandoned.
 - A **Checkout Reservation** may include one **Analytics Visitor** for analytics continuity, but checkout must work without one.
 - An **Order** is created only after successful payment confirmation.

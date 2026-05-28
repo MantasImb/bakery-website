@@ -55,12 +55,20 @@ V1 should prioritize a clear purchase flow for middle-aged or older customers an
 - Each weekly menu contains a small number of products, typically 3-5.
 - Admins can reuse previous product information by copying a product from an earlier weekly menu into a new weekly menu.
 - A copied product becomes an independently editable product for the new weekly menu and does not mutate the previous product.
+- Copying a product reuses only information intrinsic to the baked item, such as localized copy, duplicated image, fixed-list allergens, and structured dietary flags.
+- External weekly settings such as price, stock limits, pickup slots, and ordering availability must be set fresh for the new weekly menu.
+- Product reuse is individual-product based, grouped by previous weekly menu in admin selection. V1 does not duplicate entire previous weekly menus.
+- Product reuse comes from previous weekly menus, not incomplete drafts. If draft products or draft weekly menus are introduced later, they should be stored separately and may be incomplete.
+- Published weekly menu product fields cannot be edited. Operational state changes such as closing ordering still need separate handling.
 - The homepage hero is driven by the active weekly menu and shows the current offer image, overlay text, quote, and CTA.
+- The homepage hero image should represent the whole active weekly menu, not a single featured product.
 - Below the homepage hero, the site explains the preorder model, pickup location, pickup timing, and key customer instructions.
 - Product browsing should be simple and direct, with clear add-to-cart controls and minimal decision complexity.
 - Product visual design can be refined later, but usability for middle-aged or older customers and families is a V1 requirement.
 - Customer-facing Norwegian and English copy should be clear, warm, and direct, especially for checkout, pickup, allergy/allergen, dietary, payment, cancellation/refund, and error messaging.
+- Allergens should be selected from a fixed list, while dietary flags should be stored as structured product fields.
 - Products have limited stock. Unlimited preorder is not allowed.
+- Ordering availability exists at both levels: the weekly menu can be open or closed for the full preorder cycle, and individual products can be sold out or manually closed while the rest of the menu remains orderable.
 - Admin can change product stock limits and manually close individual products or the full weekly menu.
 - Checkout must prevent overselling, including concurrent checkout attempts.
 - Stripe is the V1 payment provider.
@@ -70,7 +78,7 @@ V1 should prioritize a clear purchase flow for middle-aged or older customers an
 - Fulfillment is pickup-only in V1.
 - Delivery is deferred to future scope.
 - Pickup uses admin-defined fixed slots, such as Saturday/Sunday 10:00-11:00.
-- Pickup slots belong to a weekly menu and can optionally have capacity limits.
+- Pickup slots belong to a weekly menu and do not have capacity limits in V1.
 - If orders already exist for a pickup slot, editing or deleting that slot must be handled explicitly.
 - Admin access uses one authenticated admin role in V1.
 - PostgreSQL and Prisma are the selected database stack for V1.
