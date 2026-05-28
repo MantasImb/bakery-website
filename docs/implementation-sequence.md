@@ -21,7 +21,7 @@ The guiding principle is to build cross-cutting foundations before they become e
 
 ## Current Progress Snapshot
 
-Last reviewed: 2026-05-18
+Last reviewed: 2026-05-28
 
 | Step | Status | Evidence |
 | --- | --- | --- |
@@ -29,7 +29,7 @@ Last reviewed: 2026-05-18
 | 2. Application and Module Skeleton | Done | Capability module entry points exist for weekly menu, cart, checkout, orders, and kitchen logic. Shared primitives exist for result, domain error, money, and IDs. `AGENTS.md` documents capability ownership and minimal public exports. |
 | 3. Sentry Error Monitoring | Done | `@sentry/nextjs` is installed; `instrumentation.ts`, `instrumentation-client.ts`, `sentry.server.config.ts`, `sentry.edge.config.ts`, and `next.config.ts` configure runtime capture and source-map upload. `/lib/observability/` owns capture wrappers, sanitization, release, and telemetry policy. `/api/dev/sentry-smoke` has verified capture in Sentry, and `docs/sentry.md` records durable guidance. |
 | 4. Analytics Wrapper and Event Plan | Done | `posthog-js`, `posthog-node`, `/lib/observability/analytics.ts`, `/lib/observability/analytics-server.ts`, `/lib/observability/posthog.ts`, `/lib/observability/posthog-server.ts`, typed helper tests, homepage analytics tests, and `docs/posthog.md` are in place. Deeper flow instrumentation remains deferred to step 12. |
-| 5. Internationalization Skeleton | Not started | No locale routes or dictionary structure are present. |
+| 5. Internationalization Skeleton | Done | `next-intl`, `i18n/routing.ts`, `i18n/request.ts`, `i18n/navigation.ts`, `proxy.ts`, `messages/no.json`, `messages/en.json`, `app/[locale]/layout.tsx`, `app/[locale]/(customer)/page.tsx`, `components/home/LanguageSwitcher.tsx`, i18n routing tests, message-key parity tests, and localized homepage smoke assertions are in place. Flow-specific locale follow-through remains with the later cart, checkout, order, email, analytics, and product-content steps. |
 | 6. Database and Prisma Foundation | Not started | No Prisma dependency, schema, migration, or database configuration is present. |
 | 7. Weekly Menu and Product Reuse | Not started | No weekly menu product reuse, persistence, admin UI, or public menu rendering exists yet. |
 | 8. Cart and Stock Validation | Not started | No cart, stock validation, or checkout reservation behavior exists yet. |
@@ -124,11 +124,13 @@ Completion plan:
 
 ## 5. Internationalization Skeleton
 
-Status: Not started
+Status: Done
 
 Set up the Norwegian/English route and dictionary structure before too much UI is built.
 
 Localization can be added incrementally, but routing and copy structure become tedious to retrofit after many pages and components exist. This step should create the path for localized UI and product content without requiring final translations for every future screen.
+
+The skeleton is now in place. Remaining locale work depends on later feature flows: checkout/order persistence locale validation, checkout language switching, payment return URLs, Stripe locale mapping, localized money/date display, customer-facing Sentry and analytics locale context, sitemap generation, and persisted product-content enforcement should be completed when those owning flows are implemented.
 
 Resolved routing direction:
 
@@ -176,51 +178,52 @@ Resolved routing direction:
 
 Actionable outcomes:
 
-- [ ] Establish supported locales and default locale: Norwegian Bokmål (`/no`) and English (`/en`), defaulting to Norwegian Bokmål.
-- [ ] Install and wire `next-intl`; do not build temporary hand-rolled dictionaries first.
-- [ ] Add a small i18n/routing module for supported locale constants and narrow route helpers.
-- [ ] Define a shared `Locale` type from supported locale constants and reuse it for route params, message loading, checkout/order locale capture, analytics, and Sentry context where appropriate.
-- [ ] Add the `next-intl` route/layout pattern for localized customer pages under the locale segment.
-- [ ] Validate locale at route/request boundaries and when persisting checkout or order locale; keep unrelated domain behavior locale-agnostic.
-- [ ] Migrate the current homepage into the localized customer route as the Step 5 vertical slice; the current homepage is a template and may be reshaped as needed for the i18n setup.
-- [ ] Use clean placeholder-quality localized homepage copy for proving the i18n system and tone; defer final sales/product copy until weekly menu content exists.
-- [ ] Implement deterministic root redirect from `/` to `/no`.
-- [ ] Return not-found for unsupported locale prefixes such as `/fr/menu`; redirect only truly unprefixed customer routes to `/no`.
-- [ ] Exclude framework internals, static assets, images, `/favicon.ico`, PostHog `/ingest` paths, API routes, and admin routes from locale redirect handling.
-- [ ] Use `next-intl` navigation helpers directly at first; defer a local localized `Link` wrapper until repeated usage proves it useful.
-- [ ] Add a language switcher for customer-facing pages using clear language names such as `Norsk` and `English`.
+- [x] Establish supported locales and default locale: Norwegian Bokmål (`/no`) and English (`/en`), defaulting to Norwegian Bokmål.
+- [x] Install and wire `next-intl`; do not build temporary hand-rolled dictionaries first.
+- [x] Add a small i18n/routing module for supported locale constants and narrow route helpers.
+- [x] Define a shared `Locale` type from supported locale constants and reuse it for route params and message loading, with later checkout/order, analytics, and Sentry usage reserved for the flows that need it.
+- [x] Add the `next-intl` route/layout pattern for localized customer pages under the locale segment.
+- [x] Validate locale at route/request boundaries; keep unrelated domain behavior locale-agnostic.
+- [x] Migrate the current homepage into the localized customer route as the Step 5 vertical slice; the current homepage is a template and may be reshaped as needed for the i18n setup.
+- [x] Use clean placeholder-quality localized homepage copy for proving the i18n system and tone; defer final sales/product copy until weekly menu content exists.
+- [x] Implement deterministic root redirect from `/` to `/no`.
+- [x] Return not-found for unsupported locale prefixes such as `/fr/menu`; redirect only truly unprefixed customer routes to `/no`.
+- [x] Exclude framework internals, static assets, images, `/favicon.ico`, PostHog `/ingest` paths, API routes, and admin routes from locale redirect handling.
+- [x] Add `next-intl` navigation helpers directly at first; defer a local localized `Link` wrapper until repeated usage proves it useful.
+- [x] Add a language switcher for customer-facing pages using clear language names such as `Norsk` and `English`.
+- [x] Add `next-intl` messages for user-facing UI copy.
+- [x] Store initial message files at `messages/no.json` and `messages/en.json`.
+- [x] Add coverage checks that fail when customer-facing message keys are missing in either supported locale.
+- [x] Defer generated message-key types until message-key mistakes become a recurring source of defects.
+- [x] Organize messages so page/workflow copy and genuinely reused phrases can evolve separately.
+- [x] Use shallow nested JSON message files by surface or shared namespace rather than one large flat message file.
+- [x] Keep customer-facing homepage copy clear, warm, and direct while reserving checkout, pickup, allergy/allergen, dietary, payment, cancellation/refund, and error messaging for the flows that introduce those states.
+- [x] Add representative customer route smoke tests that assert high-value visible strings in both supported locales, while keeping component/domain behavior tests focused on behavior rather than every exact translation.
+- [x] Add a lightweight localized metadata pattern for customer-facing pages, including alternate locale URLs.
+- [x] Ensure localized metadata uses self-canonical URLs and `x-default` points to `/no`.
+- [x] Confirm product content can eventually be stored and rendered per locale, with both supported customer languages required for weekly menu publication.
 - [ ] Keep the language switcher available but unobtrusive during checkout, preserving cart and entered data where technically feasible.
 - [ ] Ensure customer flow links and payment return URLs preserve the active locale.
+- [ ] Validate locale when persisting checkout or order locale.
 - [ ] Keep the future Stripe Checkout locale mapping small and provider-specific to checkout integration code.
-- [ ] Add `next-intl` messages for user-facing UI copy.
-- [ ] Store initial message files at `messages/no.json` and `messages/en.json`.
-- [ ] Add coverage checks that fail when customer-facing message keys are missing in either supported locale.
-- [ ] Defer generated message-key types until message-key mistakes become a recurring source of defects.
-- [ ] Organize messages so page/workflow copy and genuinely reused phrases can evolve separately.
-- [ ] Use shallow nested JSON message files by surface or shared namespace rather than one large flat message file.
-- [ ] Keep customer-facing copy clear, warm, and direct, especially for checkout, pickup, allergy/allergen, dietary, payment, cancellation/refund, and error messaging.
 - [ ] Include customer-facing validation, empty-state, loading, not-found, and recoverable-error messages in localized message coverage.
-- [ ] Add representative customer route smoke tests that assert high-value visible strings in both supported locales, while keeping component/domain behavior tests focused on behavior rather than every exact translation.
 - [ ] Confirm customer-facing error boundaries or route orchestration can attach safe locale context to Sentry events.
-- [ ] Add a lightweight localized metadata pattern for customer-facing pages, including alternate locale URLs.
-- [ ] Ensure localized metadata uses self-canonical URLs and `x-default` points to `/no`.
 - [ ] Include both localized canonical customer URLs in sitemap generation when sitemap support is added; do not include unprefixed customer URLs.
 - [ ] Include customer locale in customer-facing analytics event properties without translating event names.
 - [ ] Add locale-aware formatting helpers or direct `next-intl` formatting usage for customer-facing money, dates, times, and numbers without storing localized strings.
-- [ ] Confirm product content can eventually be stored and rendered per locale, with both supported customer languages required for weekly menu publication.
 - [ ] Confirm checkout/order persistence can store the customer locale used for later transactional email copy.
 
-Implementation shape:
+Implemented shape:
 
-- Add the `next-intl` dependency and follow the current `next-intl` and local Next.js App Router docs for the exact setup files.
-- Create initial `messages/no.json` and `messages/en.json` files with shallow nested keys.
-- Create a small i18n/routing module for supported locale constants, default locale, the shared `Locale` type, and narrow route helpers.
-- Add the `next-intl` request/routing setup and locale redirect handling for customer pages only.
-- Move the current homepage into the localized customer route tree, for example under `app/[locale]/(customer)/`.
-- Keep admin routes, API routes, framework internals, static assets, `/favicon.ico`, and PostHog `/ingest` paths outside locale redirect handling.
-- Add a customer language switcher using `Norsk` and `English`.
-- Add localized metadata for the homepage with self-canonical URLs, `hreflang` alternates, and `x-default` pointing to `/no`.
-- Add tests for message-key parity, `/` redirecting to `/no`, `/no` and `/en` rendering high-value localized homepage copy, unsupported locale prefixes returning not-found, and language-switcher links preserving the stable path.
+- Added the `next-intl` dependency and wired it through the current `next-intl` and local Next.js App Router setup.
+- Created initial `messages/no.json` and `messages/en.json` files with shallow nested keys.
+- Created a small i18n/routing module for supported locale constants, default locale, the shared `Locale` type, and narrow route helpers.
+- Added the `next-intl` request/routing setup and locale redirect handling for customer pages only.
+- Moved the current homepage into the localized customer route tree under `app/[locale]/(customer)/`.
+- Kept admin routes, API routes, framework internals, static assets, `/favicon.ico`, and PostHog `/ingest` paths outside locale redirect handling.
+- Added a customer language switcher using `Norsk` and `English`.
+- Added localized metadata for the homepage with self-canonical URLs, `hreflang` alternates, and `x-default` pointing to `/no`.
+- Added tests for message-key parity, `/no` and `/en` rendered homepage copy, routing helpers, and language-switcher path preservation. Route-level proxy regression tests for `/` redirect and unsupported locale prefixes can be added if the test harness grows direct proxy coverage.
 
 ## 6. Database and Prisma Foundation
 
