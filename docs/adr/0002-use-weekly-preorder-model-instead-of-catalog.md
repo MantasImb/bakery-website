@@ -17,4 +17,4 @@ Admins may reuse past product information by copying a product from a previous w
 
 The active weekly menu is the customer-facing source of truth for what can be ordered. Product browsing, stock validation, pickup slots, homepage promotion, and kitchen reports should be designed around the weekly menu rather than a global product catalog.
 
-Edits to a copied product should not rewrite the previous product it was copied from. V1 should avoid a separate reusable template library unless admin workflow proves that copying from previous weekly menus is insufficient.
+Edits to a copied product should not rewrite the previous product it was copied from. Copying a product should reuse only product information intrinsic to the baked item, such as localized copy, duplicated image, fixed-list allergens, and structured dietary flags. External weekly settings such as price, stock limits, pickup slots, and ordering availability are week-specific and must be set fresh before publication. V1 should avoid a separate reusable template library and whole-menu duplication unless admin workflow proves that copying individual products from previous weekly menus is insufficient.
