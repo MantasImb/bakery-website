@@ -255,7 +255,7 @@ Implemented shape:
 - Installed Prisma 7 with PostgreSQL driver adapter dependencies.
 - Added a local PostgreSQL compose service and matching `DATABASE_URL` configuration.
 - Added `prisma.config.ts` with the Prisma 7 datasource configuration and checked-in migrations path.
-- Added `prisma/schema.prisma` with a generated client at `app/generated/prisma`, while keeping that generated output out of version control.
+- Added `prisma/schema.prisma` with a generated client at `lib/generated/prisma`, while keeping that generated output out of version control.
 - Added the initial checked-in migration for the weekly-menu persistence slice only.
 - Added `lib/db/prisma.ts` as the server-only project-owned Prisma Client wrapper.
 - Added `DATABASE_URL` to `.env.example`.

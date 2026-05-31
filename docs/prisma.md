@@ -87,7 +87,9 @@ Deployment flow:
 bun run db:deploy
 ```
 
-Production builds run Prisma generation before `next build`, so deployment environments also need `DATABASE_URL` available during build.
+Vercel deployments use `bun run vercel-build`, which runs Prisma Client generation, applies checked-in migrations with `prisma migrate deploy`, and then builds Next.js.
+
+Deployment environments need `DATABASE_URL` available during build. Give migration-capable database credentials only to Vercel environments that are allowed to apply migrations. If Preview deployments should not migrate the production database, use a separate preview database or withhold `DATABASE_URL` from Preview builds.
 
 `prisma db push` is not the normal workflow for this app. It may be useful for throwaway experiments, but durable schema changes should be represented as reviewed migration files.
 
