@@ -32,6 +32,13 @@ bun run build
 
 Copy `.env.example` to `.env.local` for local development and fill in only the variables needed for the feature you are working on.
 
+Start the local PostgreSQL database before running Prisma migrations or database-backed feature work:
+
+```bash
+docker compose up -d postgres
+bun run db:migrate
+```
+
 ## Environment Variables
 
 Sentry error monitoring uses these variables:
@@ -58,3 +65,7 @@ PostHog server analytics uses these variables:
 
 - `POSTHOG_PROJECT_API_KEY`: Server-side PostHog project API key. Leave empty to disable server capture.
 - `POSTHOG_HOST`: PostHog API host, such as `https://eu.posthog.com`.
+
+Prisma uses this variable:
+
+- `DATABASE_URL`: PostgreSQL connection string. The local compose service uses `postgresql://bakery:bakery@localhost:5432/bakery_website`.
