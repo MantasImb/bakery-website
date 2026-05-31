@@ -28,9 +28,17 @@ Follow [AGENTS.md](./AGENTS.md) when changing the codebase. In particular:
 bun test
 bun run lint
 bun run build
+bun run vercel-build
 ```
 
 Copy `.env.example` to `.env.local` for local development and fill in only the variables needed for the feature you are working on.
+
+Start the local PostgreSQL database before running Prisma migrations or database-backed feature work:
+
+```bash
+docker compose up -d postgres
+bun run db:migrate
+```
 
 ## Environment Variables
 
@@ -58,3 +66,9 @@ PostHog server analytics uses these variables:
 
 - `POSTHOG_PROJECT_API_KEY`: Server-side PostHog project API key. Leave empty to disable server capture.
 - `POSTHOG_HOST`: PostHog API host, such as `https://eu.posthog.com`.
+
+Prisma uses this variable:
+
+- `DATABASE_URL`: PostgreSQL connection string. The local compose service uses `postgresql://bakery:bakery@localhost:5432/bakery_website`.
+
+Vercel uses `bun run vercel-build`, configured in `vercel.json`, so deployments run Prisma Client generation, checked-in migrations, and the Next.js production build in that order. Set `DATABASE_URL` in Vercel for any environment that should apply migrations.
