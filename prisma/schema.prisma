@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum WeeklyMenuStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum OrderingAvailability {
+  OPEN
+  CLOSED
+}
+
+model WeeklyMenu {
+  id                   String                @id @default(uuid()) @db.Uuid
+  status               WeeklyMenuStatus      @default(DRAFT)
+  title                String?
+  orderingAvailability OrderingAvailability?
+  publishedAt          DateTime?
+  archivedAt           DateTime?
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+
+  products    Product[]
+  pickupSlots PickupSlot[]
+
+  @@index([status])
+  @@index([publishedAt])
+}
+
+model Product {
+  id                   String                @id @default(uuid()) @db.Uuid
+  weeklyMenuId         String                @db.Uuid
+  copiedFromProductId  String?               @db.Uuid
+  position             Int                   @default(0)
+  imageUrl             String?
+  imageAltText         String?
+  allergenKeys         String[]              @default([])
+  dietaryFlagKeys      String[]              @default([])
+  stockLimit           Int?
+  orderingAvailability OrderingAvailability?
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+
+  weeklyMenu        WeeklyMenu       @relation(fields: [weeklyMenuId], references: [id], onDelete: Cascade)
+  copiedFromProduct Product?         @relation("ProductCopySource", fields: [copiedFromProductId], references: [id], onDelete: SetNull)
+  copiedProducts    Product[]        @relation("ProductCopySource")
+  contents          ProductContent[]
+  price             ProductPrice?
+
+  @@index([weeklyMenuId, position])
+  @@index([copiedFromProductId])
+}
+
+model ProductContent {
+  id          String   @id @default(uuid()) @db.Uuid
+  productId   String   @db.Uuid
+  locale      String
+  name        String?
+  description String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, locale])
+  @@index([locale])
+}
+
+model ProductPrice {
+  id          String   @id @default(uuid()) @db.Uuid
+  productId   String   @unique @db.Uuid
+  amountMinor Int
+  currency    String   @default("NOK")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model PickupSlot {
+  id           String   @id @default(uuid()) @db.Uuid
+  weeklyMenuId String   @db.Uuid
+  position     Int      @default(0)
+  label        String?
+  startsAt     DateTime?
+  endsAt       DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  weeklyMenu WeeklyMenu @relation(fields: [weeklyMenuId], references: [id], onDelete: Cascade)
+
+  @@index([weeklyMenuId, position])
+  @@index([startsAt])
+}

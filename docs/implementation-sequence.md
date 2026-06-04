@@ -5,6 +5,7 @@ Related durable docs:
 - Domain language: [`../CONTEXT.md`](../CONTEXT.md)
 - Product scope: [`prd.md`](./prd.md)
 - Architectural decisions: [`adr/`](./adr/)
+- Prisma guidance: [`prisma.md`](./prisma.md)
 - Internationalization guidance: [`i18n.md`](./i18n.md)
 - SEO guidance: [`seo.md`](./seo.md)
 
@@ -21,7 +22,7 @@ The guiding principle is to build cross-cutting foundations before they become e
 
 ## Current Progress Snapshot
 
-Last reviewed: 2026-05-28
+Last reviewed: 2026-05-31
 
 | Step | Status | Evidence |
 | --- | --- | --- |
@@ -30,7 +31,7 @@ Last reviewed: 2026-05-28
 | 3. Sentry Error Monitoring | Done | `@sentry/nextjs` is installed; `instrumentation.ts`, `instrumentation-client.ts`, `sentry.server.config.ts`, `sentry.edge.config.ts`, and `next.config.ts` configure runtime capture and source-map upload. `/lib/observability/` owns capture wrappers, sanitization, release, and telemetry policy. `/api/dev/sentry-smoke` has verified capture in Sentry, and `docs/sentry.md` records durable guidance. |
 | 4. Analytics Wrapper and Event Plan | Done | `posthog-js`, `posthog-node`, `/lib/observability/analytics.ts`, `/lib/observability/analytics-server.ts`, `/lib/observability/posthog.ts`, `/lib/observability/posthog-server.ts`, typed helper tests, homepage analytics tests, and `docs/posthog.md` are in place. Deeper flow instrumentation remains deferred to step 12. |
 | 5. Internationalization Skeleton | Done | `next-intl`, `i18n/routing.ts`, `i18n/request.ts`, `i18n/navigation.ts`, `proxy.ts`, `messages/no.json`, `messages/en.json`, `app/[locale]/layout.tsx`, `app/[locale]/(customer)/page.tsx`, `components/home/LanguageSwitcher.tsx`, i18n routing tests, message-key parity tests, and localized homepage smoke assertions are in place. Flow-specific locale follow-through remains with the later cart, checkout, order, email, analytics, and product-content steps. |
-| 6. Database and Prisma Foundation | Not started | No Prisma dependency, schema, migration, or database configuration is present. |
+| 6. Database and Prisma Foundation | Done | `prisma`, `@prisma/client`, `@prisma/adapter-pg`, `pg`, and `dotenv` are installed. `compose.yaml`, `prisma.config.ts`, `prisma/schema.prisma`, checked-in initial migration files, Prisma package scripts, `DATABASE_URL` example/local configuration, and `lib/db/prisma.ts` are in place. |
 | 7. Weekly Menu and Product Reuse | Not started | No weekly menu product reuse, persistence, admin UI, or public menu rendering exists yet. |
 | 8. Cart and Stock Validation | Not started | No cart, stock validation, or checkout reservation behavior exists yet. |
 | 9. Stripe Checkout and Order Finalization | Not started | No Stripe dependency, checkout session creation, webhook handling, or order finalization exists yet. |
@@ -227,18 +228,39 @@ Implemented shape:
 
 ## 6. Database and Prisma Foundation
 
-Status: Not started
+Status: Done
 
 Add PostgreSQL and Prisma when the first persistent feature is ready.
 
 The weekly menu and products need durable storage, but database work should follow the module skeleton so persistence does not become the domain model. Prisma should provide schema, migrations, and relational access while business rules remain testable outside the database where possible.
 
+Keep the first persistence slice deliberately narrow. Define only the schema needed by the next real feature work, starting with weekly-menu persistence, and let later checkout, order, payment, fulfillment, and notification tables arrive with the flows that need them. This avoids freezing speculative data shapes before the business behavior has made them concrete.
+
+Use Prisma through a small project-owned database wrapper rather than importing the ORM throughout capability modules. The initial setup should add `prisma/schema.prisma`, generate Prisma Client into the current Prisma-recommended generated-client location for Next.js, and expose the shared client through a narrow module such as `lib/db/prisma.ts`. Feature modules should still own business rules and should introduce persistence-facing repository or service boundaries only when real behavior needs them.
+
 Actionable outcomes:
 
-- [ ] Add Prisma and initial PostgreSQL configuration.
-- [ ] Define initial models for weekly menus, weekly menu products, localized product content, pickup slots, and stock limits.
-- [ ] Add migration workflow documentation.
-- [ ] Add tests around domain behavior separately from ORM implementation details.
+- [x] Add Prisma and initial PostgreSQL configuration.
+- [x] Add package scripts for Prisma generation, local migrations, and deployment migrations immediately after installing Prisma.
+- [x] Generate Prisma Client using the current Prisma Next.js pattern and access it through a small project-owned database wrapper.
+- [x] Define initial models only for the first weekly-menu persistence slice: weekly menus, menu-scoped products, localized product content, product prices, pickup slots, stock limits, and ordering availability.
+- [x] Defer checkout reservations, orders, payment state, fulfillment state, and notification state until their owning feature steps introduce real behavior.
+- [x] Add migration workflow documentation in [`prisma.md`](./prisma.md), using checked-in migrations from the start.
+- [x] Verify the Prisma foundation with generation, migration, typecheck, build, or equivalent command-level checks.
+- [x] Add database integration tests only when real repository/query behavior is introduced.
+- [x] Add tests around domain behavior separately from ORM implementation details when weekly-menu behavior lands.
+
+Implemented shape:
+
+- Installed Prisma 7 with PostgreSQL driver adapter dependencies.
+- Added a local PostgreSQL compose service and matching `DATABASE_URL` configuration.
+- Added `prisma.config.ts` with the Prisma 7 datasource configuration and checked-in migrations path.
+- Added `prisma/schema.prisma` with a generated client at `lib/generated/prisma`, while keeping that generated output out of version control.
+- Added the initial checked-in migration for the weekly-menu persistence slice only.
+- Added `lib/db/prisma.ts` as the server-only project-owned Prisma Client wrapper.
+- Added `DATABASE_URL` to `.env.example`.
+- Added `db:generate`, `db:migrate`, and `db:deploy` package scripts, and made production builds generate Prisma Client first so clean checkouts do not depend on checked-in generated output.
+- Verified schema validation, client generation, applying the checked-in migration to the local PostgreSQL compose database, lint, Jest, and production build.
 
 ## 7. Weekly Menu and Product Reuse
 
@@ -255,14 +277,19 @@ Actionable outcomes:
 - [ ] Group reusable product sources by previous weekly menu in the admin selection UI.
 - [ ] Reuse individual products only; do not duplicate entire previous weekly menus in V1.
 - [ ] Ensure edits to a copied product do not rewrite the previous product it was copied from.
-- [ ] Copy only product information intrinsic to the baked item, such as localized copy, duplicated image, fixed-list allergens, and structured dietary flags.
-- [ ] Require external weekly settings such as price, stock limits, pickup slots, and ordering availability to be set fresh before the copied product can be published.
+- [ ] Copy product information intrinsic to the baked item, such as localized copy, duplicated image, fixed-list allergens, and structured dietary flags.
+- [ ] Carry forward the previous product price as an editable starting reference when copying a product, while requiring the new weekly product to own its current price.
+- [ ] Require external weekly settings such as stock limits, pickup slots, and ordering availability to be set fresh before the copied product's weekly menu can be published.
 - [ ] Keep product reuse sourced from previous weekly menus, not incomplete drafts. If draft products or draft weekly menus are introduced later, store them separately and allow them to be incomplete.
+- [ ] Allow draft products to be incomplete during setup, and enforce required customer-facing and operational fields before weekly menu publication.
 - [ ] Support 3-5 products per weekly menu.
 - [ ] Store product name, description, price, image, fixed-list allergens, structured dietary flags, and localized copy.
-- [ ] Prevent publishing a weekly menu unless each product has localized product content for both supported customer languages.
-- [ ] Store stock limits and sold-out/closed state.
+- [ ] Prevent publishing a weekly menu unless each product has required customer-facing and operational fields, including localized product content for both supported customer languages, price, image, stock limit, and ordering availability.
+- [ ] Prevent publishing a weekly menu unless it has at least one valid pickup slot.
+- [ ] Store stock limits and manual open/closed ordering availability.
 - [ ] Model ordering availability at both weekly-menu and product levels.
+- [ ] Store manual open/closed ordering availability at weekly-menu and product levels in the first persistence slice.
+- [ ] Defer derived sold-out behavior until cart, checkout reservation, and order stock logic exist.
 - [ ] Treat published weekly menu product fields as immutable; handle operational close/sold-out state separately.
 - [ ] Render the homepage hero with an image representing the whole active weekly menu, not a single featured product.
 - [ ] Render the active weekly menu on the public homepage and product selection flow.
