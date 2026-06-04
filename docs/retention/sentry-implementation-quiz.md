@@ -386,11 +386,11 @@ This quiz is based on the current Sentry guidance and implementation in this pro
 - [ ] C. `NEXT_PUBLIC_SENTRY_RELEASE`, then `NODE_ENV`
 - [ ] D. `SENTRY_PROJECT`, then `SENTRY_ORG`
 
-#### 63. What is the browser release precedence in the helper?
-- [ ] A. `SENTRY_RELEASE`, then `NEXT_PUBLIC_SENTRY_RELEASE`, then `VERCEL_GIT_COMMIT_SHA`
-- [ ] B. `NEXT_PUBLIC_SENTRY_RELEASE`, then `SENTRY_RELEASE`, then `VERCEL_GIT_COMMIT_SHA`
-- [ ] C. `VERCEL_GIT_COMMIT_SHA`, then `NEXT_PUBLIC_SENTRY_RELEASE`
-- [ ] D. `NODE_ENV`, then `SENTRY_RELEASE`
+#### 63. How does browser runtime release handling avoid drifting from uploaded source maps?
+- [ ] A. Browser init relies on the release injected by `@sentry/nextjs` during the same build
+- [ ] B. Browser init resolves `NEXT_PUBLIC_SENTRY_RELEASE` before `SENTRY_RELEASE`
+- [ ] C. Browser init uses `VERCEL_GIT_COMMIT_SHA` directly
+- [ ] D. Browser init uses `NODE_ENV` as the release
 
 #### 64. What does `sentryReleaseOption(undefined)` return?
 - [ ] A. `{ release: undefined }`
@@ -399,7 +399,7 @@ This quiz is based on the current Sentry guidance and implementation in this pro
 - [ ] D. It throws
 
 #### 65. What does `sentryReleaseOption("release_123")` return?
-- [ ] A. `{ name: "release_123" }`
+- [ ] A. `{ release: { name: "release_123" } }`
 - [ ] B. `{ release: "release_123" }`
 - [ ] C. `{ sentryRelease: "release_123" }`
 - [ ] D. `"release_123"`
@@ -612,8 +612,8 @@ This quiz is based on the current Sentry guidance and implementation in this pro
 - [ ] C. No release is ever configured
 - [ ] D. Browser releases are ignored
 
-#### 100. What does the browser release test verify?
-- [ ] A. `NEXT_PUBLIC_SENTRY_RELEASE` is preferred when present
+#### 100. What does the runtime release option test verify?
+- [ ] A. `sentryRuntimeReleaseOption("release_123")` returns `{ release: "release_123" }`
 - [ ] B. `SENTRY_PROJECT` is preferred when present
 - [ ] C. `SENTRY_AUTH_TOKEN` becomes the release
 - [ ] D. `NODE_ENV` becomes the release
@@ -668,10 +668,10 @@ This quiz is based on the current Sentry guidance and implementation in this pro
 - [ ] C. `production`
 - [ ] D. It is not present
 
-#### 109. What does `.env.example` recommend for `NEXT_PUBLIC_SENTRY_RELEASE`?
-- [ ] A. Set it to a different value from the server release
+#### 109. What does README say about a separate public browser release variable?
+- [ ] A. Do not configure one because it can drift from the uploaded source-map release
 - [ ] B. Set it to the same value so browser events match uploaded source maps
-- [ ] C. Leave it unset in production
+- [ ] C. Use it only in production
 - [ ] D. Set it to the Sentry auth token
 
 #### 110. Which variables does README say should use the same environment label?
@@ -804,9 +804,9 @@ This quiz is based on the current Sentry guidance and implementation in this pro
 60. B
 61. B
 62. B
-63. B
+63. A
 64. B
-65. B
+65. A
 66. A
 67. A
 68. A
@@ -850,7 +850,7 @@ This quiz is based on the current Sentry guidance and implementation in this pro
 106. B
 107. A
 108. B
-109. B
+109. A
 110. A
 111. B
 112. C
